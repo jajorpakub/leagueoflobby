@@ -1,0 +1,1173 @@
+.random-picks {
+  min-height: calc(100vh - 80px);
+  padding: 2rem;
+  animation: fadeIn 0.6s ease-out;
+  color: white;
+}
+
+.picks-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.picks-header h1 {
+  color: #fbbf24;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+}
+
+.picks-header p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
+.api-info {
+  color: #10b981 !important;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.picks-controls {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.control-group {
+  margin-bottom: 1.5rem;
+}
+
+.control-group label {
+  color: #fbbf24;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.control-group input[type="range"] {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.control-group input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #fbbf24;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.range-value {
+  color: #fbbf24;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-left: 1rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #fbbf24;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.pick-button {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1f2937;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+}
+
+.pick-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4);
+}
+
+.clear-button {
+  background: rgba(239, 68, 68, 0.8);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-button:hover {
+  background: rgba(239, 68, 68, 1);
+  transform: translateY(-1px);
+}
+
+.picked-champions {
+  margin: 2rem 0;
+}
+
+.picked-champions h2 {
+  color: #fbbf24;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.picked-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.pick-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(251, 191, 36, 0.3);
+  border-radius: 16px;
+  padding: 1.5rem;
+  position: relative;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  animation: pickCardAppear 0.6s ease-out;
+}
+
+.pick-card.Fighter {
+  border-color: rgba(204, 102, 102, 0.5);
+  background: linear-gradient(135deg, rgba(204, 102, 102, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.pick-card.Tank {
+  border-color: rgba(102, 153, 204, 0.5);
+  background: linear-gradient(135deg, rgba(102, 153, 204, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.pick-card.Assassin {
+  border-color: rgba(153, 102, 204, 0.5);
+  background: linear-gradient(135deg, rgba(153, 102, 204, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.pick-card.Mage {
+  border-color: rgba(102, 204, 204, 0.5);
+  background: linear-gradient(135deg, rgba(102, 204, 204, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.pick-card.Marksman {
+  border-color: rgba(204, 153, 102, 0.5);
+  background: linear-gradient(135deg, rgba(204, 153, 102, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.pick-card.Support {
+  border-color: rgba(153, 204, 102, 0.5);
+  background: linear-gradient(135deg, rgba(153, 204, 102, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.pick-card:hover {
+  transform: translateY(-5px);
+}
+
+.pick-number {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #fbbf24;
+  color: #1f2937;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.champion-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.champion-info h3 {
+  color: white;
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.champion-title {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.champion-tags {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.role-tag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.role-tag.Fighter {
+  background: rgba(204, 102, 102, 0.8);
+}
+
+.role-tag.Tank {
+  background: rgba(102, 153, 204, 0.8);
+}
+
+.role-tag.Assassin {
+  background: rgba(153, 102, 204, 0.8);
+}
+
+.role-tag.Mage {
+  background: rgba(102, 204, 204, 0.8);
+}
+
+.role-tag.Marksman {
+  background: rgba(204, 153, 102, 0.8);
+}
+
+.role-tag.Support {
+  background: rgba(153, 204, 102, 0.8);
+}
+
+.difficulty-badge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.difficulty-badge.low {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.difficulty-badge.medium {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+}
+
+.difficulty-badge.high {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.champions-list {
+  margin-top: 3rem;
+}
+
+.champions-list h2 {
+  color: #fbbf24;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.champions-info {
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.role-section {
+  margin-bottom: 2rem;
+}
+
+.role-header {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid;
+}
+
+.role-header.Fighter {
+  color: #cc6666;
+  border-color: #cc6666;
+}
+
+.role-header.Tank {
+  color: #6699cc;
+  border-color: #6699cc;
+}
+
+.role-header.Assassin {
+  color: #9966cc;
+  border-color: #9966cc;
+}
+
+.role-header.Mage {
+  color: #66cccc;
+  border-color: #66cccc;
+}
+
+.role-header.Marksman {
+  color: #cc9966;
+  border-color: #cc9966;
+}
+
+.role-header.Support {
+  color: #99cc66;
+  border-color: #99cc66;
+}
+
+.champions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.champion-item {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.champion-item.Fighter {
+  border-color: rgba(204, 102, 102, 0.4);
+}
+
+.champion-item.Tank {
+  border-color: rgba(102, 153, 204, 0.4);
+}
+
+.champion-item.Assassin {
+  border-color: rgba(153, 102, 204, 0.4);
+}
+
+.champion-item.Mage {
+  border-color: rgba(102, 204, 204, 0.4);
+}
+
+.champion-item.Marksman {
+  border-color: rgba(204, 153, 102, 0.4);
+}
+
+.champion-item.Support {
+  border-color: rgba(153, 204, 102, 0.4);
+}
+
+.champion-item:hover.Fighter {
+  border-color: rgba(204, 102, 102, 0.8);
+  box-shadow: 0 0 20px rgba(204, 102, 102, 0.3);
+}
+
+.champion-item:hover.Tank {
+  border-color: rgba(102, 153, 204, 0.8);
+  box-shadow: 0 0 20px rgba(102, 153, 204, 0.3);
+}
+
+.champion-item:hover.Assassin {
+  border-color: rgba(153, 102, 204, 0.8);
+  box-shadow: 0 0 20px rgba(153, 102, 204, 0.3);
+}
+
+.champion-item:hover.Mage {
+  border-color: rgba(102, 204, 204, 0.8);
+  box-shadow: 0 0 20px rgba(102, 204, 204, 0.3);
+}
+
+.champion-item:hover.Marksman {
+  border-color: rgba(204, 153, 102, 0.8);
+  box-shadow: 0 0 20px rgba(204, 153, 102, 0.3);
+}
+
+.champion-item:hover.Support {
+  border-color: rgba(153, 204, 102, 0.8);
+  box-shadow: 0 0 20px rgba(153, 204, 102, 0.3);
+}
+
+.champion-item:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.champion-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.champion-name {
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.difficulty-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.difficulty-dot.low {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.difficulty-dot.medium {
+  background: #fbbf24;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+}
+
+.difficulty-dot.high {
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.champion-item.excluded {
+  opacity: 0.5;
+  filter: grayscale(70%);
+}
+
+.excluded-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  z-index: 1;
+  color: #ef4444;
+}
+
+/* Animacje */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pickCardAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.loading {
+  animation: pulse 2s infinite;
+}
+
+/* Error states */
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+/* Loading states */
+.loading-message {
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  color: #fbbf24;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+/* Historia losowania */
+.pick-history {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.history-header h2 {
+  color: #fbbf24;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.history-entry {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.history-entry:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(5px);
+}
+
+.history-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+}
+
+.history-date {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.history-count {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+}
+
+.history-champions {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+  overflow-x: auto;
+  padding: 0.25rem;
+}
+
+.history-champion-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.history-champion-img:hover {
+  transform: scale(1.1);
+  border-color: #fbbf24;
+}
+
+.load-history-button {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.load-history-button:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-2px);
+}
+
+/* Responsywność dla historii */
+@media (max-width: 768px) {
+  .history-entry {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .history-info {
+    min-width: unset;
+    width: 100%;
+  }
+  
+  .history-champions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .load-history-button {
+    align-self: flex-end;
+  }
+}
+
+
+
+.controls-row:last-child {
+  margin-bottom: 0;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.control-group label {
+  color: #fbbf24;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.number-selector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.number-btn {
+  width: 45px;
+  height: 45px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.number-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(251, 191, 36, 0.5);
+  transform: translateY(-2px);
+}
+
+.number-btn.active {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border-color: #f59e0b;
+  color: #1a1a1a;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.checkbox-label input {
+  opacity: 0;
+  position: absolute;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.checkmark::after {
+  content: '✓';
+  color: #1a1a1a;
+  font-weight: bold;
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.3s ease;
+}
+
+.checkbox-label input:checked + .checkmark {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border-color: #16a34a;
+}
+
+.checkbox-label input:checked + .checkmark::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.available-info {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.available-info strong {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.roll-btn {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border: none;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.roll-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+}
+
+.roll-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.roll-btn.rolling {
+  animation: rolling 1.5s infinite;
+}
+
+.reset-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.picks-result {
+  margin-bottom: 2rem;
+  animation: slideInUp 0.6s ease-out;
+}
+
+.picks-result h2 {
+  text-align: center;
+  color: #fbbf24;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.picks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pick-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  animation: pickCardAppear 0.6s ease-out both;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.pick-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #dc2626, #ef4444, #f59e0b, #fbbf24);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pick-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+.pick-card:hover::before {
+  opacity: 1;
+}
+
+.pick-number {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #1a1a1a;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+}
+
+.champion-avatar {
+  margin-bottom: 1rem;
+}
+
+.champion-avatar img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.pick-card:hover .champion-avatar img {
+  transform: scale(1.1);
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+}
+
+.champion-info h3 {
+  color: white;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.champion-tags {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.role-tag, .difficulty-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.mark-played-btn {
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #22c55e;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.mark-played-btn:hover:not(:disabled) {
+  background: rgba(34, 197, 94, 0.3);
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+.mark-played-btn:disabled {
+  background: rgba(107, 114, 128, 0.2);
+  border-color: rgba(107, 114, 128, 0.3);
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.played-champions {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.played-champions h3 {
+  color: #fbbf24;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.played-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.played-champion {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(107, 114, 128, 0.2);
+  border: 1px solid rgba(107, 114, 128, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.played-champion img {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.remove-played-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.remove-played-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: scale(1.1);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .random-picks {
+    padding: 1rem;
+  }
+  
+  .picker-controls {
+    padding: 1.5rem;
+  }
+  
+  .controls-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+  
+  .control-group {
+    align-items: center;
+    text-align: center;
+  }
+  
+  .picks-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .roll-btn, .reset-btn {
+    width: 100%;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pickCardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes rolling {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  50% { transform: rotate(180deg); }
+  75% { transform: rotate(270deg); }
+}
+
+/* Loading and Error States */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  min-height: 400px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container p,
+.error-container p {
+  margin: 8px 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+}
+
+.error-container h3 {
+  color: #f44336;
+  margin-bottom: 16px;
+}
+
+.error-container button {
+  padding: 12px 24px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 16px;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.error-container button:hover {
+  background: #0056b3;
+}
+
+.api-info {
+  font-size: 14px;
+  color: #28a745;
+  font-weight: 500;
+  margin: 8px 0;
+}
+
+.champions-info {
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+  margin-bottom: 16px;
+}
