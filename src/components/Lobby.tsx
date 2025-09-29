@@ -55,6 +55,14 @@ const games: Game[] = [
     color: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)',
     icon: '🛡️',
     isNew: true
+  },
+  {
+    id: 'ostatnie-gierki',
+    title: 'OSTATNIE GIERKI',
+    description: 'Sprawdź historię gier dowolnego gracza z szczegółowymi statystykami',
+    color: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+    icon: '📊',
+    isNew: true
   }
 ]
 

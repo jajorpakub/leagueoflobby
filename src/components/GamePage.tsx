@@ -5,6 +5,7 @@ import OneHits from './OneHits'
 import RandomPicks from './RandomPicks'
 import Auguments from './Auguments'
 import Items from './Items'
+import MatchHistory from './MatchHistory'
 import './GamePage.css'
 
 const gameData: Record<string, {
@@ -48,6 +49,12 @@ const gameData: Record<string, {
     description: 'Wszystkie przedmioty z League of Legends z filtrami i szczegółami',
     color: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)',
     content: 'Wszystkie itemy z gry!'
+  },
+  'ostatnie-gierki': {
+    title: 'OSTATNIE GIERKI',
+    description: 'Sprawdź historię gier dowolnego gracza z szczegółowymi statystykami',
+    color: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+    content: 'Historia gier graczy!'
   },
   'pro-scene-quiz': {
     title: 'PRO SCENE QUIZ',
@@ -147,6 +154,18 @@ function GamePage() {
           <h1>{game.title}</h1>
         </header>
         <Items />
+      </div>
+    )
+  }
+
+  if (gameId === 'ostatnie-gierki') {
+    return (
+      <div className="game-page">
+        <header className="game-header">
+          <Link to="/" className="back-btn">← Powrót</Link>
+          <h1>{game.title}</h1>
+        </header>
+        <MatchHistory />
       </div>
     )
   }
