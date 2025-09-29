@@ -8,6 +8,7 @@ interface MatchDisplayInfo {
 }
 
 const MatchHistory: React.FC = () => {
+  const service = MatchHistoryService.getInstance()
   const [summonerName, setSummonerName] = useState('')
   const [region, setRegion] = useState('eun1')
   const [summonerInfo, setSummonerInfo] = useState<SummonerInfo | null>(null)
@@ -15,7 +16,6 @@ const MatchHistory: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [searchPerformed, setSearchPerformed] = useState(false)
-  const [matchHistoryService] = useState(() => MatchHistoryService.getInstance())
 
   const regions = [
     { value: 'eun1', label: 'EUNE (Europe Nordic & East)' },
@@ -43,15 +43,21 @@ const MatchHistory: React.FC = () => {
 
     try {
       // Get summoner info
-      const summoner = await matchHistoryService.getSummonerByName(summonerName.trim(), region)
+      const trimmedName = summonerName.trim()
+      if (!trimmedName) {
+        setError('Wprowadź nazwę gracza')
+        return
+      }
+      
+      const summoner = await service.getSummonerByName(trimmedName, region)
       setSummonerInfo(summoner)
 
       // Get match history
-      const matchIds = await matchHistoryService.getMatchHistory(summoner.puuid, 10)
+      const matchIds = await service.getMatchHistory(summoner.puuid, 10)
       
       // Get match details
       const matchPromises = matchIds.map(matchId => 
-        matchHistoryService.getMatchDetails(matchId)
+                service.getMatchDetails(matchId)
       )
       
       const matchDetails = await Promise.all(matchPromises)
@@ -122,7 +128,33 @@ const MatchHistory: React.FC = () => {
     <div className="match-history">
       <div className="match-history-header">
         <h1>📊 Ostatnie Gierki</h1>
-        <p>Sprawdź historię gier dowolnego gracza z League of Legends</p>
+        <p className="subtitle">
+          Sprawdź historie gier dowolnego gracza z League of Legends
+        </p>
+        {!service.isUsingRealAPI() && (
+          <div style={{
+            background: '#ff6b6b',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            marginBottom: '20px',
+            fontSize: '14px'
+          }}>
+            ⚠️ Używam danych testowych - API key nie załadowany
+          </div>
+        )}
+        {service.isUsingRealAPI() && (
+          <div style={{
+            background: '#51cf66',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            marginBottom: '20px',
+            fontSize: '14px'
+          }}>
+            ✅ Połączono z Riot Games API
+          </div>
+        )}
         <p className="api-note">💡 Demo wersja z przykładowymi danymi - w pełnej wersji integracja z Riot Games API</p>
       </div>
 
@@ -216,15 +248,15 @@ const MatchHistory: React.FC = () => {
                         {isWin ? '✅ WYGRANA' : '❌ PRZEGRANA'}
                       </span>
                       <span className="match-time">
-                        {matchHistoryService.getTimeAgo(match.info.gameEndTimestamp)}
+                        {service.getTimeAgo(match.info.gameEndTimestamp)}
                       </span>
                     </div>
                     <div className="match-info">
                       <span className="game-mode">
-                        {getGameModeIcon(match.info.gameMode)} {matchHistoryService.getQueueName(match.info.queueId)}
+                        {getGameModeIcon(match.info.gameMode)} {service.getQueueName(match.info.queueId)}
                       </span>
                       <span className="game-duration">
-                        ⏱️ {matchHistoryService.formatGameDuration(match.info.gameDuration)}
+                        ⏱️ {service.formatGameDuration(match.info.gameDuration)}
                       </span>
                     </div>
                   </div>
