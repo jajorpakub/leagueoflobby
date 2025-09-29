@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import ChampionsRegions from './ChampionsRegions'
 import ChampionEffects from './ChampionEffects'
 import OneHits from './OneHits'
+import RandomPicks from './RandomPicks'
 import Auguments from './Auguments'
 import './GamePage.css'
 
@@ -115,6 +116,18 @@ function GamePage() {
           <h1>{game.title}</h1>
         </header>
         <Auguments />
+      </div>
+    )
+  }
+
+  if (gameId === 'losuj-picki') {
+    return (
+      <div className="game-page">
+        <header className="game-header">
+          <Link to="/" className="back-btn">← Powrót</Link>
+          <h1>{game.title}</h1>
+        </header>
+        <RandomPicks />
       </div>
     )
   }
