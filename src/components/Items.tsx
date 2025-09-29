@@ -16,6 +16,7 @@ const Items: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [itemService] = useState(() => ItemService.getInstance())
   const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, y: 0, item: null })
+  const [filtersExpanded, setFiltersExpanded] = useState(false)
   
   // Filters
   const [searchTerm, setSearchTerm] = useState('')
@@ -25,6 +26,7 @@ const Items: React.FC = () => {
   const [showArena, setShowArena] = useState(true)
   const [showOther, setShowOther] = useState(false)
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 })
+  const [sortBy, setSortBy] = useState<'price' | 'name' | 'rarity'>('price')
 
   // Available tags for filtering
   const itemTags = [
@@ -87,8 +89,11 @@ const Items: React.FC = () => {
       item.name !== ''
     )
 
+    // Sort items
+    filtered = sortItems(filtered)
+
     setFilteredItems(filtered)
-  }, [itemService, allItems, searchTerm, selectedTags, showSR, showARAM, showArena, showOther, priceRange])
+  }, [itemService, allItems, searchTerm, selectedTags, showSR, showARAM, showArena, showOther, priceRange, sortBy])
 
   const toggleTag = (tag: string) => {
     const newTags = new Set(selectedTags)
@@ -116,9 +121,35 @@ const Items: React.FC = () => {
 
   const getItemRarity = (item: Item): string => {
     if (item.gold.total >= 3000) return 'legendary'
-    if (item.gold.total >= 2000) return 'epic'
-    if (item.gold.total >= 1000) return 'rare'
-    return 'common'
+    if (item.gold.total >= 1000) return 'epic'
+    return 'basic'
+  }
+
+  const getRarityName = (rarity: string): string => {
+    switch (rarity) {
+      case 'legendary': return 'Legendarne'
+      case 'epic': return 'Pryzmatyczne'
+      case 'basic': return 'Zwykłe'
+      default: return 'Zwykłe'
+    }
+  }
+
+  const sortItems = (items: Item[]): Item[] => {
+    return [...items].sort((a, b) => {
+      switch (sortBy) {
+        case 'price':
+          return b.gold.total - a.gold.total
+        case 'name':
+          return a.name.localeCompare(b.name)
+        case 'rarity':
+          const rarityOrder = { 'legendary': 3, 'epic': 2, 'basic': 1 }
+          const aRarity = getItemRarity(a) as keyof typeof rarityOrder
+          const bRarity = getItemRarity(b) as keyof typeof rarityOrder
+          return rarityOrder[bRarity] - rarityOrder[aRarity]
+        default:
+          return 0
+      }
+    })
   }
 
   if (loading) {
@@ -154,128 +185,163 @@ const Items: React.FC = () => {
         <p className="api-info">📡 Dane pobrane na żywo z Data Dragon API</p>
       </div>
 
-      <div className="items-filters">
-        <div className="filter-section">
-          <h3>🔍 Wyszukiwanie</h3>
+      <div className="items-controls">
+        <div className="controls-header" onClick={() => setFiltersExpanded(!filtersExpanded)}>
+          <h3>� Filtry i wyszukiwanie</h3>
+          <button className="expand-button">
+            {filtersExpanded ? '🔼 Zwiń filtry' : '🔽 Rozwiń filtry'}
+          </button>
+        </div>
+        
+        <div className="controls-quick">
           <input
             type="text"
             placeholder="Szukaj itemów..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
+            className="search-input-compact"
           />
+          <select 
+            value={sortBy} 
+            onChange={(e) => setSortBy(e.target.value as 'price' | 'name' | 'rarity')}
+            className="sort-select"
+          >
+            <option value="price">Sortuj: Cena ↓</option>
+            <option value="name">Sortuj: Nazwa A-Z</option>
+            <option value="rarity">Sortuj: Rzadkość</option>
+          </select>
         </div>
 
-        <div className="filter-section">
-          <h3>🗺️ Tryby gry</h3>
-          <div className="checkbox-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={showSR}
-                onChange={(e) => setShowSR(e.target.checked)}
-              />
-              Summoner's Rift
-            </label>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={showARAM}
-                onChange={(e) => setShowARAM(e.target.checked)}
-              />
-              ARAM
-            </label>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={showArena}
-                onChange={(e) => setShowArena(e.target.checked)}
-              />
-              Arena & Inne
-            </label>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={showOther}
-                onChange={(e) => setShowOther(e.target.checked)}
-              />
-              Specjalne
-            </label>
-          </div>
-        </div>
+        {filtersExpanded && (
+          <div className="items-filters">
+            <div className="filter-row">
+              <div className="filter-section-compact">
+                <h4>🗺️ Tryby gry</h4>
+                <div className="checkbox-group-compact">
+                  <label className={`checkbox-label-compact ${showSR ? 'active' : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={showSR}
+                      onChange={(e) => setShowSR(e.target.checked)}
+                    />
+                    Summoner's Rift
+                  </label>
+                  <label className={`checkbox-label-compact ${showARAM ? 'active' : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={showARAM}
+                      onChange={(e) => setShowARAM(e.target.checked)}
+                    />
+                    ARAM
+                  </label>
+                  <label className={`checkbox-label-compact ${showArena ? 'active' : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={showArena}
+                      onChange={(e) => setShowArena(e.target.checked)}
+                    />
+                    Arena
+                  </label>
+                  <label className={`checkbox-label-compact ${showOther ? 'active' : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={showOther}
+                      onChange={(e) => setShowOther(e.target.checked)}
+                    />
+                    Specjalne
+                  </label>
+                </div>
+              </div>
 
-        <div className="filter-section">
-          <h3>💰 Cena</h3>
-          <div className="price-range">
-            <input
-              type="range"
-              min="0"
-              max="10000"
-              step="100"
-              value={priceRange.min}
-              onChange={(e) => setPriceRange(prev => ({ ...prev, min: parseInt(e.target.value) }))}
-            />
-            <span>{priceRange.min}g</span>
-            <span> - </span>
-            <input
-              type="range"
-              min="0"
-              max="10000"
-              step="100"
-              value={priceRange.max}
-              onChange={(e) => setPriceRange(prev => ({ ...prev, max: parseInt(e.target.value) }))}
-            />
-            <span>{priceRange.max}g</span>
-          </div>
-        </div>
+              <div className="filter-section-compact">
+                <h4>💰 Cena</h4>
+                <div className="price-range-compact">
+                  <input
+                    type="range"
+                    min="0"
+                    max="10000"
+                    step="100"
+                    value={priceRange.min}
+                    onChange={(e) => setPriceRange(prev => ({ ...prev, min: parseInt(e.target.value) }))}
+                  />
+                  <span>{priceRange.min}g</span>
+                  <span> - </span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10000"
+                    step="100"
+                    value={priceRange.max}
+                    onChange={(e) => setPriceRange(prev => ({ ...prev, max: parseInt(e.target.value) }))}
+                  />
+                  <span>{priceRange.max}g</span>
+                </div>
+              </div>
+            </div>
 
-        <div className="filter-section">
-          <h3>🏷️ Kategorie</h3>
-          <div className="tags-grid">
-            {itemTags.map(tag => (
-              <button
-                key={tag}
-                className={`tag-button ${selectedTags.has(tag) ? 'active' : ''}`}
-                onClick={() => toggleTag(tag)}
-              >
-                {tag}
-              </button>
-            ))}
+            <div className="filter-section-compact">
+              <h4>🏷️ Kategorie</h4>
+              <div className="tags-grid-compact">
+                {itemTags.map(tag => (
+                  <button
+                    key={tag}
+                    className={`tag-button-compact ${selectedTags.has(tag) ? 'active' : ''}`}
+                    onClick={() => toggleTag(tag)}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="items-results">
         <p>Pokazano {filteredItems.length} z {allItems.length} itemów</p>
-        <div className="items-grid">
-          {filteredItems.map(item => (
-            <div
-              key={item.id}
-              className={`item-card ${getItemRarity(item)}`}
-              onMouseEnter={(e) => handleMouseEnter(e, item)}
-              onMouseLeave={handleMouseLeave}
-            >
-              <img
-                src={itemService.getItemImageUrl(item)}
-                alt={item.name}
-                className="item-image"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                }}
-              />
-              <div className="item-info">
-                <h4 className="item-name">{item.name}</h4>
-                <p className="item-price">{item.gold.total}g</p>
-                <div className="item-tags">
-                  {item.tags.slice(0, 2).map(tag => (
-                    <span key={tag} className="item-tag">{tag}</span>
-                  ))}
-                </div>
+        
+        {/* Group items by rarity */}
+        {['legendary', 'epic', 'basic'].map(rarity => {
+          const itemsInCategory = filteredItems.filter(item => getItemRarity(item) === rarity)
+          if (itemsInCategory.length === 0) return null
+          
+          return (
+            <div key={rarity} className={`rarity-section ${rarity}`}>
+              <h3 className="rarity-header">
+                {getRarityName(rarity)} ({itemsInCategory.length})
+              </h3>
+              <div className="items-grid">
+                {itemsInCategory.map(item => (
+                  <div
+                    key={item.id}
+                    className={`item-card ${getItemRarity(item)}`}
+                    onMouseEnter={(e) => handleMouseEnter(e, item)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <img
+                      src={itemService.getItemImageUrl(item)}
+                      alt={item.name}
+                      className="item-image"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
+                    />
+                    <div className="item-info">
+                      <h4 className="item-name">{item.name}</h4>
+                      <p className="item-price">{item.gold.total}g</p>
+                      <div className="item-tags">
+                        {item.tags.slice(0, 2).map(tag => (
+                          <span key={tag} className="item-tag">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
+          )
+        })}
       </div>
 
       {tooltip.visible && tooltip.item && (
