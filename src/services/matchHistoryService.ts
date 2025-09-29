@@ -1,3 +1,9 @@
+export interface AccountInfo {
+  puuid: string
+  gameName: string
+  tagLine: string
+}
+
 export interface SummonerInfo {
   id: string
   accountId: string
@@ -174,20 +180,22 @@ export interface Team {
   win: boolean
 }
 
-export interface GameMode {
-  queueId: number
-  map: string
-  description: string
-  name: string
-}
-
 class MatchHistoryService {
   private static instance: MatchHistoryService
-  private apiKey: string = '' // Note: W produkcji to powinno być w zmiennych środowiskowych
-  private baseUrl: string = 'https://{region}.api.riotgames.com'
+  private apiKey: string = ''
   private version: string = '15.19.1'
+  private useRealAPI: boolean = false
 
-  private constructor() {}
+  private constructor() {
+    // Sprawdź czy mamy klucz API z environment variables
+    try {
+      // @ts-ignore - Vite env variables
+      this.apiKey = import.meta.env?.VITE_RIOT_API_KEY || ''
+      this.useRealAPI = !!this.apiKey
+    } catch {
+      this.useRealAPI = false
+    }
+  }
 
   static getInstance(): MatchHistoryService {
     if (!MatchHistoryService.instance) {
@@ -196,34 +204,222 @@ class MatchHistoryService {
     return MatchHistoryService.instance
   }
 
-  // Note: Riot API wymaga klucza API, więc użyjemy mock danych dla demonstracji
-  async getSummonerByName(summonerName: string, region: string = 'eun1'): Promise<SummonerInfo> {
-    // W prawdziwej implementacji:
-    // const url = `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodeURIComponent(summonerName)}`
+  setApiKey(apiKey: string): void {
+    this.apiKey = apiKey
+    this.useRealAPI = !!apiKey
+  }
+
+  async getSummonerByRiotId(gameName: string, tagLine: string = 'EUN1'): Promise<{ account: AccountInfo; summoner: SummonerInfo }> {
+    console.log('API Key status:', this.useRealAPI ? 'Using real API' : 'Using mock data')
+    console.log('API Key length:', this.apiKey.length)
+    console.log(`Searching for: ${gameName}#${tagLine}`)
     
-    // Mock data dla demonstracji
+    if (!this.useRealAPI) {
+      return this.getMockSummonerByRiotId(gameName, tagLine)
+    }
+
+    try {
+      // Najpierw pobieramy dane konta przez Riot ID
+      const continentalRegion = this.getContinentalRegion('eun1')
+      const accountUrl = `https://${continentalRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`
+      
+      const accountResponse = await fetch(accountUrl, {
+        headers: {
+          'X-Riot-Token': this.apiKey
+        }
+      })
+
+      if (!accountResponse.ok) {
+        const errorText = await accountResponse.text()
+        console.error(`Account API Error ${accountResponse.status}:`, errorText)
+        
+        if (accountResponse.status === 404) {
+          throw new Error('Gracz nie został znaleziony. Sprawdź czy nick#tag jest poprawny')
+        }
+        if (accountResponse.status === 401) {
+          throw new Error('Nieprawidłowy klucz API')
+        }
+        if (accountResponse.status === 403) {
+          throw new Error('Brak uprawnień do API - sprawdź czy klucz API jest ważny')
+        }
+        if (accountResponse.status === 429) {
+          throw new Error('Zbyt wiele zapytań - spróbuj ponownie za chwilę')
+        }
+        throw new Error(`Błąd Account API: ${accountResponse.status} - ${errorText}`)
+      }
+
+      const accountData: AccountInfo = await accountResponse.json()
+      
+      // Teraz pobieramy dane summoner przez PUUID
+      const summonerUrl = `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accountData.puuid}`
+      
+      const summonerResponse = await fetch(summonerUrl, {
+        headers: {
+          'X-Riot-Token': this.apiKey
+        }
+      })
+
+      if (!summonerResponse.ok) {
+        const errorText = await summonerResponse.text()
+        console.error(`Summoner API Error ${summonerResponse.status}:`, errorText)
+        throw new Error(`Błąd Summoner API: ${summonerResponse.status} - ${errorText}`)
+      }
+
+      const summonerData: SummonerInfo = await summonerResponse.json()
+      
+      return {
+        account: accountData,
+        summoner: summonerData
+      }
+    } catch (error) {
+      console.error('Error fetching summoner by Riot ID:', error)
+      throw error
+    }
+  }
+
+  // Backward compatibility - parsuje nick#tag lub używa domyślnego tagu
+  async getSummonerByName(summonerName: string, region: string = 'eun1'): Promise<SummonerInfo> {
+    const parts = summonerName.split('#')
+    const gameName = parts[0]
+    const tagLine = parts[1] || 'EUN1' // Domyślny tag dla EUNE
+    
+    const result = await this.getSummonerByRiotId(gameName, tagLine)
+    return result.summoner
+  }
+
+  async getMatchHistory(puuid: string, count: number = 10, region: string = 'eun1'): Promise<string[]> {
+    if (!this.useRealAPI) {
+      return this.getMockMatchHistory(count)
+    }
+
+    try {
+      const continentalRegion = this.getContinentalRegion(region)
+      const url = `https://${continentalRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=${count}`
+      
+      console.log('Fetching match history from:', url)
+      
+      const response = await fetch(url, {
+        headers: {
+          'X-Riot-Token': this.apiKey
+        }
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error(`Match History API Error ${response.status}:`, errorText)
+        throw new Error(`Błąd pobierania historii: ${response.status} - ${errorText}`)
+      }
+
+      const matchIds = await response.json()
+      console.log('Match IDs received:', matchIds)
+      return matchIds
+    } catch (error) {
+      console.error('Error fetching match history:', error)
+      throw error
+    }
+  }
+
+  async getMatchDetails(matchId: string): Promise<MatchInfo> {
+    if (!this.useRealAPI) {
+      return this.getMockMatchDetails(matchId)
+    }
+
+    try {
+      const continentalRegion = this.getContinentalRegionFromMatchId(matchId)
+      const url = `https://${continentalRegion}.api.riotgames.com/lol/match/v5/matches/${matchId}`
+      
+      const response = await fetch(url, {
+        headers: {
+          'X-Riot-Token': this.apiKey
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`Błąd pobierania szczegółów meczu: ${response.status}`)
+      }
+
+      const matchData = await response.json()
+      return matchData
+    } catch (error) {
+      console.error('Error fetching match details:', error)
+      throw error
+    }
+  }
+
+  private getContinentalRegion(region: string): string {
+    const continentalMap: { [key: string]: string } = {
+      'eun1': 'europe',
+      'euw1': 'europe',
+      'tr1': 'europe',
+      'ru': 'europe',
+      'na1': 'americas',
+      'br1': 'americas',
+      'la1': 'americas',
+      'la2': 'americas',
+      'kr': 'asia',
+      'jp1': 'asia',
+      'oc1': 'sea'
+    }
+    return continentalMap[region.toLowerCase()] || 'europe'
+  }
+
+  private getContinentalRegionFromMatchId(matchId: string): string {
+    if (matchId.startsWith('EUN1_') || matchId.startsWith('EUW1_') || matchId.startsWith('TR1_') || matchId.startsWith('RU_')) {
+      return 'europe'
+    }
+    if (matchId.startsWith('NA1_') || matchId.startsWith('BR1_') || matchId.startsWith('LA1_') || matchId.startsWith('LA2_')) {
+      return 'americas'
+    }
+    if (matchId.startsWith('KR_') || matchId.startsWith('JP1_')) {
+      return 'asia'
+    }
+    if (matchId.startsWith('OC1_')) {
+      return 'sea'
+    }
+    return 'europe'
+  }
+
+  // Mock methods for demo purposes
+  private async getMockSummonerByRiotId(gameName: string, tagLine: string): Promise<{ account: AccountInfo; summoner: SummonerInfo }> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        if (summonerName.toLowerCase().includes('error')) {
-          reject(new Error('Summoner not found'))
+        if (gameName.toLowerCase().includes('error')) {
+          reject(new Error('Gracz nie został znaleziony'))
           return
         }
         
+        const puuid = 'mock_puuid_' + Math.random().toString(36).substr(2, 9)
+        
         resolve({
-          id: 'mock_id_' + Math.random().toString(36).substr(2, 9),
-          accountId: 'mock_account_' + Math.random().toString(36).substr(2, 9),
-          puuid: 'mock_puuid_' + Math.random().toString(36).substr(2, 9),
-          name: summonerName,
-          profileIconId: Math.floor(Math.random() * 100) + 1,
-          revisionDate: Date.now(),
-          summonerLevel: Math.floor(Math.random() * 400) + 30
+          account: {
+            puuid: puuid,
+            gameName: gameName,
+            tagLine: tagLine
+          },
+          summoner: {
+            id: 'mock_id_' + Math.random().toString(36).substr(2, 9),
+            accountId: 'mock_account_' + Math.random().toString(36).substr(2, 9),
+            puuid: puuid,
+            name: gameName, // Dla kompatybilności
+            profileIconId: Math.floor(Math.random() * 100) + 1,
+            revisionDate: Date.now(),
+            summonerLevel: Math.floor(Math.random() * 400) + 30
+          }
         })
-      }, 1000) // Symulacja opóźnienia API
+      }, 1000)
     })
   }
 
-  async getMatchHistory(puuid: string, count: number = 10): Promise<string[]> {
-    // Mock match IDs
+  private async getMockSummoner(summonerName: string): Promise<SummonerInfo> {
+    const parts = summonerName.split('#')
+    const gameName = parts[0]
+    const tagLine = parts[1] || 'EUN1'
+    
+    const result = await this.getMockSummonerByRiotId(gameName, tagLine)
+    return result.summoner
+  }
+
+  private async getMockMatchHistory(count: number): Promise<string[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
         const matchIds = Array.from({ length: count }, (_, i) => 
@@ -234,8 +430,7 @@ class MatchHistoryService {
     })
   }
 
-  async getMatchDetails(matchId: string): Promise<MatchInfo> {
-    // Mock match data
+  private async getMockMatchDetails(matchId: string): Promise<MatchInfo> {
     return new Promise((resolve) => {
       setTimeout(() => {
         const gameModes = ['CLASSIC', 'ARAM', 'URF', 'ARENA']
@@ -317,7 +512,7 @@ class MatchHistoryService {
           spell3Casts: Math.floor(Math.random() * 50),
           spell4Casts: Math.floor(Math.random() * 20),
           summoner1Casts: Math.floor(Math.random() * 10),
-          summoner1Id: 4, // Flash
+          summoner1Id: 4,
           summoner2Casts: Math.floor(Math.random() * 10),
           summoner2Id: Math.floor(Math.random() * 20) + 1,
           summonerId: `summoner_${i}`,
@@ -360,8 +555,8 @@ class MatchHistoryService {
             participants: participants.map(p => p.puuid)
           },
           info: {
-            gameCreation: Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000), // Last week
-            gameDuration: Math.floor(Math.random() * 2400) + 900, // 15-55 minutes
+            gameCreation: Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000),
+            gameDuration: Math.floor(Math.random() * 2400) + 900,
             gameEndTimestamp: Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000),
             gameId: Math.floor(Math.random() * 1000000),
             gameMode: gameMode,
@@ -439,6 +634,10 @@ class MatchHistoryService {
     if (hours > 0) return `${hours} godzin temu`
     if (minutes > 0) return `${minutes} minut temu`
     return 'Przed chwilą'
+  }
+
+  isUsingRealAPI(): boolean {
+    return this.useRealAPI
   }
 }
 

@@ -59,7 +59,8 @@ const MatchHistory: React.FC = () => {
       // Find player data in each match
       const matchesWithPlayerData: MatchDisplayInfo[] = matchDetails.map(match => {
         const playerData = match.info.participants.find(p => 
-          p.puuid === summoner.puuid || p.summonerName.toLowerCase() === summoner.name.toLowerCase()
+          p.puuid === summoner.puuid || 
+          (p.summonerName && summoner.name && p.summonerName.toLowerCase() === summoner.name.toLowerCase())
         ) || match.info.participants[0] // Fallback to first participant for demo
         
         return {
@@ -133,7 +134,7 @@ const MatchHistory: React.FC = () => {
               value={summonerName}
               onChange={(e) => setSummonerName(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Wprowadź nick gracza..."
+              placeholder="Wprowadź nick gracza (np. Jankos#EUN1 lub Jankos)"
               className="summoner-input"
             />
             <select
