@@ -23,9 +23,6 @@ FROM nginx:alpine
 # Copy built app from build stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
-
 # Copy startup script
 COPY start-nginx.sh /start-nginx.sh
 RUN chmod +x /start-nginx.sh
