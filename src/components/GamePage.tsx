@@ -4,6 +4,7 @@ import ChampionEffects from './ChampionEffects'
 import OneHits from './OneHits'
 import RandomPicks from './RandomPicks'
 import Auguments from './Auguments'
+import Items from './Items'
 import './GamePage.css'
 
 const gameData: Record<string, {
@@ -41,6 +42,12 @@ const gameData: Record<string, {
     description: 'Wszystkie ulepszenia z Arena z podziałem na Silver/Gold/Pryzmatyczne',
     color: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)',
     content: 'Augumenty z trybu Arena!'
+  },
+  'itemy': {
+    title: 'ITEMY',
+    description: 'Wszystkie przedmioty z League of Legends z filtrami i szczegółami',
+    color: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)',
+    content: 'Wszystkie itemy z gry!'
   },
   'pro-scene-quiz': {
     title: 'PRO SCENE QUIZ',
@@ -128,6 +135,18 @@ function GamePage() {
           <h1>{game.title}</h1>
         </header>
         <RandomPicks />
+      </div>
+    )
+  }
+
+  if (gameId === 'itemy') {
+    return (
+      <div className="game-page">
+        <header className="game-header">
+          <Link to="/" className="back-btn">← Powrót</Link>
+          <h1>{game.title}</h1>
+        </header>
+        <Items />
       </div>
     )
   }

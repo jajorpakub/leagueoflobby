@@ -24,6 +24,7 @@ const RandomPicks: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [championService] = useState(() => ChampionService.getInstance())
+  const [championsListExpanded, setChampionsListExpanded] = useState(false)
 
   // Load champions from API
   useEffect(() => {
@@ -333,39 +334,48 @@ const RandomPicks: React.FC = () => {
       )}
 
       <div className="champions-list">
-        <h2>📋 Wszyscy Champions ({allChampions.length})</h2>
-        <p className="champions-info">Kliknij na championa żeby go wykluczyć/włączyć</p>
-        <div className="champions-grid">
-          {allChampions.map(champion => (
-            <div
-              key={champion.id}
-              className={`champion-item ${excludedChampions.has(champion.id) ? 'excluded' : ''}`}
-              onClick={() => toggleChampionExclusion(champion.id)}
-              style={{
-                borderColor: getRoleColor(champion.tags)
-              }}
-            >
-              <img
-                src={championService.getChampionImageUrl(champion)}
-                alt={champion.name}
-                className="champion-avatar"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = 'https://ddragon.leagueoflegends.com/cdn/15.19.1/img/champion/Aatrox.png';
-                }}
-              />
-              <div className="champion-name">{champion.name}</div>
-              <div
-                className="difficulty-dot"
-                style={{ backgroundColor: getDifficultyColor(champion.info.difficulty) }}
-                title={`Difficulty: ${getDifficultyLevel(champion.info.difficulty)} (${champion.info.difficulty}/10)`}
-              />
-              {excludedChampions.has(champion.id) && (
-                <div className="excluded-overlay">❌</div>
-              )}
-            </div>
-          ))}
+        <div className="champions-header" onClick={() => setChampionsListExpanded(!championsListExpanded)}>
+          <h2>📋 Wszyscy Champions ({allChampions.length})</h2>
+          <button className="expand-button">
+            {championsListExpanded ? '🔼 Zwiń listę' : '🔽 Rozwiń listę'}
+          </button>
         </div>
+        {championsListExpanded && (
+          <>
+            <p className="champions-info">Kliknij na championa żeby go wykluczyć/włączyć</p>
+            <div className="champions-grid">
+              {allChampions.map(champion => (
+                <div
+                  key={champion.id}
+                  className={`champion-item ${excludedChampions.has(champion.id) ? 'excluded' : ''}`}
+                  onClick={() => toggleChampionExclusion(champion.id)}
+                  style={{
+                    borderColor: getRoleColor(champion.tags)
+                  }}
+                >
+                  <img
+                    src={championService.getChampionImageUrl(champion)}
+                    alt={champion.name}
+                    className="champion-avatar"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://ddragon.leagueoflegends.com/cdn/15.19.1/img/champion/Aatrox.png';
+                    }}
+                  />
+                  <div className="champion-name">{champion.name}</div>
+                  <div
+                    className="difficulty-dot"
+                    style={{ backgroundColor: getDifficultyColor(champion.info.difficulty) }}
+                    title={`Difficulty: ${getDifficultyLevel(champion.info.difficulty)} (${champion.info.difficulty}/10)`}
+                  />
+                  {excludedChampions.has(champion.id) && (
+                    <div className="excluded-overlay">❌</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

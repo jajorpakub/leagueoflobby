@@ -47,6 +47,14 @@ const games: Game[] = [
     description: 'Wszystkie ulepszenia z Arena z podziałem na Silver/Gold/Pryzmatyczne',
     color: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)',
     icon: '⚡'
+  },
+  {
+    id: 'itemy',
+    title: 'ITEMY',
+    description: 'Wszystkie przedmioty z League of Legends z filtrami i szczegółami',
+    color: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)',
+    icon: '🛡️',
+    isNew: true
   }
 ]
 
