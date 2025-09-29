@@ -47,20 +47,6 @@ const games: Game[] = [
     description: 'Wszystkie ulepszenia z Arena z podziałem na Silver/Gold/Pryzmatyczne',
     color: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)',
     icon: '⚡'
-  },
-  {
-    id: 'pro-scene-quiz',
-    title: 'PRO SCENE QUIZ',
-    description: 'Sprawdz swoją wiedzę o profesjonalnej scenie LoL',
-    color: 'linear-gradient(135deg, #7c2d92 0%, #a855f7 100%)',
-    icon: '🏆'
-  },
-  {
-    id: 'ability-quiz',
-    title: 'ABILITY QUIZ',
-    description: 'Dopasuj umiejętności do właściwych championów',
-    color: 'linear-gradient(135deg, #b91c1c 0%, #dc2626 100%)',
-    icon: '✨'
   }
 ]
 
