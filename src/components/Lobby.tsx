@@ -13,25 +13,11 @@ interface Game {
 
 const games: Game[] = [
   {
-    id: 'championy-nacje',
-    title: 'CHAMPIONY Z PODZIAŁEM NA NACJE',
-    description: 'Przeglądaj championów podzielonych na regiony Runeterry',
-    color: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
-    icon: '🗺️'
-  },
-  {
-    id: 'efekty-championow',
-    title: 'EFEKTY NA CHAMPIONACH',
-    description: 'Przeglądaj championów według typów efektów i umiejętności',
-    color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-    icon: '⚡'
-  },
-  {
-    id: 'one-hity',
-    title: 'ONE-HITY',
-    description: 'Championni i itemy z efektami proc, pasywami i one-hit effects',
-    color: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
-    icon: '⚡',
+    id: 'ostatnie-gierki',
+    title: 'OSTATNIE GIERKI',
+    description: 'Sprawdź historię gier dowolnego gracza z szczegółowymi statystykami',
+    color: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+    icon: '📅',
     isNew: true
   },
   {
@@ -42,27 +28,39 @@ const games: Game[] = [
     icon: '🎰'
   },
   {
-    id: 'augumenty',
-    title: 'AUGUMENTY',
-    description: 'Wszystkie ulepszenia z Arena z podziałem na Silver/Gold/Pryzmatyczne',
-    color: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)',
-    icon: '⚡'
+    id: 'przejdziemy-po-poprawkach',
+    title: 'PRZEJDZIEMY PO POPRAWKACH',
+    description: 'Sprawdź najnowsze zmiany w patchu i jak wpływają na gameplay',
+    color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+    icon: '📋'
   },
   {
     id: 'itemy',
     title: 'ITEMY',
     description: 'Wszystkie przedmioty z League of Legends z filtrami i szczegółami',
     color: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)',
-    icon: '🛡️',
-    isNew: true
+    icon: '🛡️'
   },
   {
-    id: 'ostatnie-gierki',
-    title: 'OSTATNIE GIERKI',
-    description: 'Sprawdź historię gier dowolnego gracza z szczegółowymi statystykami',
-    color: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-    icon: '📊',
-    isNew: true
+    id: 'augumenty',
+    title: 'AUGUMENTY',
+    description: 'Wszystkie ulepszenia z Arena z podziałem na Silver/Gold/Pryzmatyczne',
+    color: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)',
+    icon: '🧭'
+  },
+  {
+    id: 'championy-nacje',
+    title: 'CHAMPIONY',
+    description: 'Przeglądaj championów podzielonych na regiony Runeterry',
+    color: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+    icon: '🎭'
+  },
+  {
+    id: 'efekty-championow',
+    title: 'EFEKTY',
+    description: 'Przeglądaj championów według typów efektów i umiejętności',
+    color: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
+    icon: '🧪'
   }
 ]
 

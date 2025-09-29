@@ -54,11 +54,11 @@
 }
 
 .games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  max-width: 1200px;
-  width: 100%;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+  gap: 1.5rem !important;
+  max-width: 1200px !important;
+  width: 100% !important;
 }
 
 .game-card {

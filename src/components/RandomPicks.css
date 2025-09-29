@@ -145,9 +145,9 @@
 }
 
 .picked-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+  gap: 1.5rem !important;
   margin-bottom: 2rem;
 }
 
@@ -390,8 +390,8 @@
 }
 
 .champions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
   gap: 1rem;
 }
 
@@ -879,8 +879,8 @@
 }
 
 .picks-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
   gap: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;

@@ -196,8 +196,8 @@
 }
 
 .tags-grid-compact {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
   gap: 0.4rem;
 }
 
@@ -287,8 +287,8 @@
 }
 
 .tags-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
   gap: 0.5rem;
 }
 
@@ -317,6 +317,9 @@
 
 .items-results {
   margin-bottom: 2rem;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .items-results > p {
@@ -327,8 +330,34 @@
   font-size: 1.1rem;
 }
 
+.hidden-items-info {
+  color: rgba(251, 191, 36, 0.8) !important;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 8px;
+  padding: 0.8rem;
+  margin: 1rem auto 2rem auto;
+  max-width: 600px;
+  font-style: normal !important;
+  font-size: 0.95rem !important;
+}
+
 .rarity-section {
   margin-bottom: 3rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rarity-section .items-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 1rem !important;
+  width: 100% !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  max-width: 1400px !important;
 }
 
 .rarity-header {
@@ -339,6 +368,29 @@
   border-radius: 12px;
   text-align: center;
   border: 2px solid;
+}
+
+.rarity-header.clickable {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.rarity-header.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.collapse-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
 }
 
 .rarity-section.legendary .rarity-header {
@@ -363,20 +415,29 @@
 }
 
 .items-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 1rem !important;
+  width: 100% !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
 }
 
 .item-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid transparent;
-  border-radius: 12px;
-  padding: 1rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 2px solid transparent !important;
+  border-radius: 12px !important;
+  padding: 1rem !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 220px !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .item-card:hover {
@@ -454,16 +515,51 @@
 }
 
 .item-image {
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 8px !important;
+  margin: 0 auto 1rem !important;
+  display: block !important;
+  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  flex-shrink: 0 !important;
+}
+
+.item-image-container {
+  width: 64px !important;
+  height: 64px !important;
+  margin: 0 auto 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+.item-fallback {
   width: 64px;
   height: 64px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
   border-radius: 8px;
-  margin: 0 auto 1rem;
-  display: block;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .item-info {
-  text-align: center;
+  text-align: center !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
 }
 
 .item-name {

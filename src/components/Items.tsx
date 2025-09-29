@@ -17,6 +17,7 @@ const Items: React.FC = () => {
   const [itemService] = useState(() => ItemService.getInstance())
   const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, y: 0, item: null })
   const [filtersExpanded, setFiltersExpanded] = useState(false)
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set())
   
   // Filters
   const [searchTerm, setSearchTerm] = useState('')
@@ -25,6 +26,7 @@ const Items: React.FC = () => {
   const [showARAM, setShowARAM] = useState(true)
   const [showArena, setShowArena] = useState(true)
   const [showOther, setShowOther] = useState(false)
+  const [showHidden, setShowHidden] = useState(false)
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 })
   const [sortBy, setSortBy] = useState<'price' | 'name' | 'rarity'>('price')
 
@@ -82,18 +84,23 @@ const Items: React.FC = () => {
     )
 
     // Remove items that shouldn't be shown
-    filtered = filtered.filter(item => 
-      item.gold.purchasable !== false &&
-      !item.hideFromAll &&
-      item.inStore !== false &&
-      item.name !== ''
-    )
+    if (!showHidden) {
+      filtered = filtered.filter(item => 
+        item.gold.purchasable !== false &&
+        !item.hideFromAll &&
+        item.inStore !== false &&
+        item.name !== ''
+      )
+    } else {
+      // Only filter out items with empty names when showing hidden items
+      filtered = filtered.filter(item => item.name !== '')
+    }
 
     // Sort items
     filtered = sortItems(filtered)
 
     setFilteredItems(filtered)
-  }, [itemService, allItems, searchTerm, selectedTags, showSR, showARAM, showArena, showOther, priceRange, sortBy])
+  }, [itemService, allItems, searchTerm, selectedTags, showSR, showARAM, showArena, showOther, showHidden, priceRange, sortBy])
 
   const toggleTag = (tag: string) => {
     const newTags = new Set(selectedTags)
@@ -103,6 +110,16 @@ const Items: React.FC = () => {
       newTags.add(tag)
     }
     setSelectedTags(newTags)
+  }
+
+  const toggleCategoryCollapse = (category: string) => {
+    const newCollapsed = new Set(collapsedCategories)
+    if (collapsedCategories.has(category)) {
+      newCollapsed.delete(category)
+    } else {
+      newCollapsed.add(category)
+    }
+    setCollapsedCategories(newCollapsed)
   }
 
   const handleMouseEnter = (event: React.MouseEvent, item: Item) => {
@@ -250,6 +267,14 @@ const Items: React.FC = () => {
                     />
                     Specjalne
                   </label>
+                  <label className={`checkbox-label-compact ${showHidden ? 'active' : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={showHidden}
+                      onChange={(e) => setShowHidden(e.target.checked)}
+                    />
+                    Ukryte itemy
+                  </label>
                 </div>
               </div>
 
@@ -299,46 +324,64 @@ const Items: React.FC = () => {
 
       <div className="items-results">
         <p>Pokazano {filteredItems.length} z {allItems.length} itemów</p>
+        {!showHidden && (
+          <p className="hidden-items-info">
+            💡 Ukryto {allItems.length - filteredItems.length} itemów (jungle itemy, eventy, itp.). 
+            Zaznacz "Ukryte itemy" aby je zobaczyć.
+          </p>
+        )}
         
         {/* Group items by rarity */}
         {['legendary', 'epic', 'basic'].map(rarity => {
           const itemsInCategory = filteredItems.filter(item => getItemRarity(item) === rarity)
           if (itemsInCategory.length === 0) return null
+          const isCollapsed = collapsedCategories.has(rarity)
           
           return (
             <div key={rarity} className={`rarity-section ${rarity}`}>
-              <h3 className="rarity-header">
+              <h3 
+                className="rarity-header clickable" 
+                onClick={() => toggleCategoryCollapse(rarity)}
+              >
+                <span className="collapse-icon">{isCollapsed ? '🔽' : '🔼'}</span>
                 {getRarityName(rarity)} ({itemsInCategory.length})
               </h3>
-              <div className="items-grid">
-                {itemsInCategory.map(item => (
-                  <div
-                    key={item.id}
-                    className={`item-card ${getItemRarity(item)}`}
-                    onMouseEnter={(e) => handleMouseEnter(e, item)}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <img
-                      src={itemService.getItemImageUrl(item)}
-                      alt={item.name}
-                      className="item-image"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                      }}
-                    />
-                    <div className="item-info">
-                      <h4 className="item-name">{item.name}</h4>
-                      <p className="item-price">{item.gold.total}g</p>
-                      <div className="item-tags">
-                        {item.tags.slice(0, 2).map(tag => (
-                          <span key={tag} className="item-tag">{tag}</span>
-                        ))}
+              {!isCollapsed && (
+                <div className="items-grid">
+                  {itemsInCategory.map(item => (
+                    <div
+                      key={item.id}
+                      className={`item-card ${getItemRarity(item)}`}
+                      onMouseEnter={(e) => handleMouseEnter(e, item)}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      <div className="item-image-container">
+                        <img
+                          src={itemService.getItemImageUrl(item)}
+                          alt={item.name}
+                          className="item-image"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            const container = target.parentElement;
+                            if (container) {
+                              container.innerHTML = `<div class="item-fallback">${item.name.charAt(0)}</div>`;
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="item-info">
+                        <h4 className="item-name">{item.name}</h4>
+                        <p className="item-price">{item.gold.total}g</p>
+                        <div className="item-tags">
+                          {item.tags.slice(0, 2).map(tag => (
+                            <span key={tag} className="item-tag">{tag}</span>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )
         })}

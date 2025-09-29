@@ -1,7 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import ChampionsRegions from './ChampionsRegions'
 import ChampionEffects from './ChampionEffects'
-import OneHits from './OneHits'
 import RandomPicks from './RandomPicks'
 import Auguments from './Auguments'
 import Items from './Items'
@@ -14,23 +13,11 @@ const gameData: Record<string, {
   color: string
   content: string
 }> = {
-  'championy-nacje': {
-    title: 'CHAMPIONY Z PODZIAŁEM NA NACJE',
-    description: 'Przeglądaj championów podzielonych na regiony Runeterry',
-    color: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
-    content: 'Regiony Runeterry z championami!'
-  },
-  'efekty-championow': {
-    title: 'EFEKTY NA CHAMPIONACH',
-    description: 'Przeglądaj championów według typów efektów i umiejętności',
-    color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-    content: 'Kategorie efektów championów!'
-  },
-  'one-hity': {
-    title: 'ONE-HITY',
-    description: 'Championni i itemy z efektami proc, pasywami i one-hit effects',
-    color: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
-    content: 'One-hit efekty i proc mechanics!'
+  'ostatnie-gierki': {
+    title: 'OSTATNIE GIERKI',
+    description: 'Sprawdź historię gier dowolnego gracza z szczegółowymi statystykami',
+    color: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+    content: 'Historia meczów gracza!'
   },
   'losuj-picki': {
     title: 'LOSUJ PICKI',
@@ -38,11 +25,11 @@ const gameData: Record<string, {
     color: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
     content: 'Losowanie championów do gier!'
   },
-  'augumenty': {
-    title: 'AUGUMENTY',
-    description: 'Wszystkie ulepszenia z Arena z podziałem na Silver/Gold/Pryzmatyczne',
-    color: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)',
-    content: 'Augumenty z trybu Arena!'
+  'przejdziemy-po-poprawkach': {
+    title: 'PRZEJDZIEMY PO POPRAWKACH',
+    description: 'Sprawdź najnowsze zmiany w patchu i jak wpływają na gameplay',
+    color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+    content: 'Analiza zmian w najnowszym patchu!'
   },
   'itemy': {
     title: 'ITEMY',
@@ -50,23 +37,23 @@ const gameData: Record<string, {
     color: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)',
     content: 'Wszystkie itemy z gry!'
   },
-  'ostatnie-gierki': {
-    title: 'OSTATNIE GIERKI',
-    description: 'Sprawdź historię gier dowolnego gracza z szczegółowymi statystykami',
-    color: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-    content: 'Historia gier graczy!'
+  'augumenty': {
+    title: 'AUGUMENTY',
+    description: 'Wszystkie ulepszenia z Arena z podziałem na Silver/Gold/Pryzmatyczne',
+    color: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)',
+    content: 'Augumenty z trybu Arena!'
   },
-  'pro-scene-quiz': {
-    title: 'PRO SCENE QUIZ',
-    description: 'Sprawdz swoją wiedzę o profesjonalnej scenie LoL',
-    color: 'linear-gradient(135deg, #7c2d92 0%, #a855f7 100%)',
-    content: 'Tu będzie quiz o profesjonalnej scenie!'
+  'championy-nacje': {
+    title: 'CHAMPIONY',
+    description: 'Przeglądaj championów podzielonych na regiony Runeterry',
+    color: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+    content: 'Regiony Runeterry z championami!'
   },
-  'ability-quiz': {
-    title: 'ABILITY QUIZ',
-    description: 'Dopasuj umiejętności do właściwych championów',
-    color: 'linear-gradient(135deg, #b91c1c 0%, #dc2626 100%)',
-    content: 'Tu będzie quiz z umiejętnościami championów!'
+  'efekty-championow': {
+    title: 'EFEKTY',
+    description: 'Przeglądaj championów według typów efektów i umiejętności',
+    color: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
+    content: 'Kategorie efektów championów!'
   }
 }
 
@@ -85,7 +72,19 @@ function GamePage() {
     )
   }
 
-  // Specjalne przypadki dla dedykowanych komponentów
+  // Routing dla dedykowanych komponentów
+  if (gameId === 'ostatnie-gierki') {
+    return (
+      <div className="game-page">
+        <header className="game-header">
+          <Link to="/" className="back-btn">← Powrót</Link>
+          <h1>{game.title}</h1>
+        </header>
+        <MatchHistory />
+      </div>
+    )
+  }
+
   if (gameId === 'championy-nacje') {
     return (
       <div className="game-page">
@@ -110,14 +109,14 @@ function GamePage() {
     )
   }
 
-  if (gameId === 'one-hity') {
+  if (gameId === 'losuj-picki') {
     return (
       <div className="game-page">
         <header className="game-header">
           <Link to="/" className="back-btn">← Powrót</Link>
           <h1>{game.title}</h1>
         </header>
-        <OneHits />
+        <RandomPicks />
       </div>
     )
   }
@@ -134,18 +133,6 @@ function GamePage() {
     )
   }
 
-  if (gameId === 'losuj-picki') {
-    return (
-      <div className="game-page">
-        <header className="game-header">
-          <Link to="/" className="back-btn">← Powrót</Link>
-          <h1>{game.title}</h1>
-        </header>
-        <RandomPicks />
-      </div>
-    )
-  }
-
   if (gameId === 'itemy') {
     return (
       <div className="game-page">
@@ -158,38 +145,44 @@ function GamePage() {
     )
   }
 
-  if (gameId === 'ostatnie-gierki') {
+  if (gameId === 'przejdziemy-po-poprawkach') {
     return (
       <div className="game-page">
         <header className="game-header">
           <Link to="/" className="back-btn">← Powrót</Link>
           <h1>{game.title}</h1>
         </header>
-        <MatchHistory />
+        <div className="game-content">
+          <div className="feature-placeholder">
+            <h2>📋 Analiza Poprawek</h2>
+            <p>Ta funkcja jest w przygotowaniu. Tutaj będziesz mógł sprawdzić:</p>
+            <ul>
+              <li>• Najnowsze zmiany w patchu</li>
+              <li>• Buffy i nerfy championów</li>
+              <li>• Zmiany w itemach</li>
+              <li>• Meta analysis</li>
+              <li>• Tier listy po patchu</li>
+            </ul>
+          </div>
+        </div>
       </div>
     )
   }
 
+  // Domyślny fallback
   return (
     <div className="game-page">
       <header className="game-header">
         <Link to="/" className="back-btn">← Powrót</Link>
         <h1>{game.title}</h1>
       </header>
-      
-      <main className="game-content">
-        <div className="game-info">
+      <div className="game-content">
+        <div className="feature-placeholder">
+          <h2>🚧 W przygotowaniu</h2>
           <p>{game.description}</p>
+          <p>Ta funkcja zostanie dodana w najbliższym czasie!</p>
         </div>
-        
-        <div className="game-area">
-          <div className="placeholder-content">
-            <h2>🚧 W budowie</h2>
-            <p>{game.content}</p>
-            <p>Ta strona będzie zawierała pełną grę!</p>
-          </div>
-        </div>
-      </main>
+      </div>
     </div>
   )
 }

@@ -304,15 +304,19 @@ const MatchHistory: React.FC = () => {
                         {[playerData.item0, playerData.item1, playerData.item2, playerData.item3, playerData.item4, playerData.item5, playerData.item6].map((itemId, idx) => (
                           <div key={idx} className="item-slot">
                             {itemId > 0 ? (
-                              <img
-                                src={`https://ddragon.leagueoflegends.com/cdn/15.19.1/img/item/${itemId}.png`}
-                                alt={`Item ${itemId}`}
-                                className="item-image"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                }}
-                              />
+                              <div className="item-container">
+                                <img
+                                  src={`https://ddragon.leagueoflegends.com/cdn/15.19.1/img/item/${itemId}.png`}
+                                  alt={`Item ${itemId}`}
+                                  className="item-image"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    const parent = target.parentElement as HTMLElement;
+                                    target.style.display = 'none';
+                                    parent.innerHTML = `<span class="item-fallback">${itemId}</span>`;
+                                  }}
+                                />
+                              </div>
                             ) : (
                               <div className="empty-item"></div>
                             )}
