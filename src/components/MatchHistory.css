@@ -24,10 +24,15 @@
 }
 
 .api-note {
-  color: #10b981 !important;
-  font-weight: 600;
-  font-size: 1rem;
-  font-style: italic;
+  background: linear-gradient(-45deg, #ff0000, #ff2e2e, #ff5858, #ffb2b2, #f7c0c0);
+  background-size: 400% 400%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  animation: gradientShift 3s ease-in-out infinite;
+  display: inline-block;
+  text-shadow: none;
 }
 
 .search-section {
@@ -63,6 +68,11 @@
   min-width: 300px;
 }
 
+.nick-input-container {
+  position: relative;
+  flex: 1;
+}
+
 .nick-input {
   background: transparent;
   border: none;
@@ -70,8 +80,66 @@
   font-size: 1rem;
   padding: 0.5rem;
   outline: none;
-  flex: 1;
+  width: 100%;
   min-width: 150px;
+}
+
+/* Suggestions dropdown */
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 4px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.suggestion-item {
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.suggestion-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item.loading {
+  cursor: default;
+  color: rgba(255, 255, 255, 0.7);
+  justify-content: center;
+}
+
+.suggestion-item.no-results {
+  cursor: default;
+  color: rgba(255, 255, 255, 0.5);
+  justify-content: center;
+  font-style: italic;
+}
+
+.suggestion-name {
+  color: white;
+  font-weight: bold;
+}
+
+.suggestion-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
 }
 
 .nick-input::placeholder {
@@ -187,11 +255,18 @@
   border-radius: 16px;
   padding: 2rem;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column; /* Zmień na kolumnę żeby elementy układały się jeden pod drugim */
   gap: 2rem;
   backdrop-filter: blur(10px);
   max-width: 1000px;
   margin: 0 auto;
+  overflow: hidden;
+}
+
+.summoner-header {
+  display: flex;
+  align-items: center; /* Wyrównaj do środka pionowo */
+  gap: 2rem;
   flex-wrap: wrap;
 }
 
@@ -217,6 +292,7 @@
   padding: 0.2rem 0.5rem;
   border-radius: 50px;
   font-size: 0.8rem;
+  z-index: 10;
 }
 
 .summoner-details h2 {
@@ -625,116 +701,72 @@
   color: #8b5cf6;
 }
 
-.main-champions {
-  width: 100%;
-  margin-top: 1rem;
-}
-
-.main-champions h4 {
-  color: #fbbf24;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-}
-
-.champions-list {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.champion-stat {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  min-width: 80px;
-}
-
-.champ-name {
-  font-weight: bold;
-  font-size: 0.9rem;
-  color: white;
-}
-
-.champ-games {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
 .stat-value.cs {
   color: #f59e0b;
 }
 
-.teammates-section {
-  width: 100%;
-  margin-top: 1rem;
+/* Sekcja fujary */
+.summoner-card .fujara-section {
+  margin: 20px 0 !important;
+  padding: 15px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  text-align: center !important;
+  width: 100% !important;
+  grid-column: 1 / -1 !important;
 }
 
-.teammates-section h4 {
-  color: #3b82f6;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
+.summoner-card .fujara-section h4 {
+  margin: 0 0 15px 0 !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  text-align: center !important;
 }
 
-.teammates-list {
+.summoner-card .fujara-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.summoner-card .fujara-bar {
+  width: 100% !important;
+  max-width: 300px !important;
+  height: 20px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  margin: 0 auto !important;
+}
+
+.fujara-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.8s ease-in-out;
+  position: relative;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.fujara-label {
   display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.teammate-stat {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.25rem;
-  min-width: 90px;
-}
-
-.teammate-name {
+  font-size: 14px;
   font-weight: bold;
-  font-size: 0.85rem;
-  color: white;
-  text-align: center;
-  max-width: 90px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.teammate-games {
-  font-size: 0.8rem;
+.fujara-percentage {
+  color: #ffd700;
+  font-size: 16px;
+}
+
+.fujara-explanation {
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.7);
-}
-
-.teammate-winrate {
-  font-size: 0.9rem;
-  font-weight: bold;
-}
-
-.teammate-winrate.good {
-  color: #10b981;
-}
-
-.teammate-winrate.average {
-  color: #f59e0b;
-}
-
-.teammate-winrate.bad {
-  color: #ef4444;
-}
-
-.champ-winrate {
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #10b981;
+  text-align: center;
+  font-style: italic;
 }
 
 .load-more-section {
@@ -805,12 +837,17 @@
   .summoner-stats {
     grid-template-columns: repeat(2, 1fr);
   }
-  
-  .main-champions {
-    text-align: center;
+}
+
+/* Keyframes for animations */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
   }
-  
-  .champions-list {
-    justify-content: center;
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }

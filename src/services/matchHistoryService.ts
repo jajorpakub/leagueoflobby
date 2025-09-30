@@ -118,8 +118,8 @@ export interface Participant {
   profileIcon: number
   puuid: string
   quadraKills: number
-  riotIdName: string
-  riotIdTagline: string
+  riotIdName?: string
+  riotIdTagline?: string
   role: string
   sightWardsBought: number
   spell1Casts: number
@@ -132,7 +132,7 @@ export interface Participant {
   summoner2Id: number
   summonerId: string
   summonerLevel: number
-  summonerName: string
+  summonerName?: string
   teamEarlySurrendered: boolean
   teamId: number
   teamPosition: string
@@ -470,13 +470,15 @@ class MatchHistoryService {
     }
   }
 
-  async calculateStatsFromMatches(matches: MatchInfo[], targetPuuid: string): Promise<{ overallKDA: any; winRate: any; mainChampions: any[]; csScore: any; teammates: any[] }> {
+  async calculateStatsFromMatches(matches: MatchInfo[], targetPuuid: string, region: string = 'eun1'): Promise<{ overallKDA: any; winRate: any; mainChampions: any[]; csScore: any; damageScore: any; mostPlayedRole: any; teammates: any[] }> {
     if (matches.length === 0) {
       return {
         overallKDA: { kills: 0, deaths: 0, assists: 0, ratio: 0 },
         winRate: { total: 0, wins: 0, percentage: 0 },
         mainChampions: [],
         csScore: { average: 0, perMinute: 0, total: 0 },
+        damageScore: { average: 0, total: 0 },
+        mostPlayedRole: { role: 'N/A', games: 0, percentage: 0 },
         teammates: []
       }
     }
@@ -487,8 +489,10 @@ class MatchHistoryService {
     let totalWins = 0
     let totalCS = 0
     let totalGameTime = 0
+    let totalDamage = 0
     const championStats: { [key: string]: { games: number; wins: number; championId: number } } = {}
-    const teammateStats: { [key: string]: { games: number; wins: number; puuid: string; riotIdName?: string; riotIdTagline?: string } } = {}
+    const teammateStats: { [key: string]: { games: number; wins: number; puuid: string; displayName?: string } } = {}
+    const roleStats: { [key: string]: number } = {}
 
     matches.forEach(match => {
       const participant = match.info.participants.find(p => p.puuid === targetPuuid)
@@ -503,6 +507,9 @@ class MatchHistoryService {
         const cs = participant.totalMinionsKilled + participant.neutralMinionsKilled
         totalCS += cs
         totalGameTime += match.info.gameDuration
+        
+        // Damage statystyki
+        totalDamage += participant.totalDamageDealtToChampions
 
         // Champion statystyki
         const champName = participant.championName
@@ -511,6 +518,10 @@ class MatchHistoryService {
         }
         championStats[champName].games++
         if (participant.win) championStats[champName].wins++
+
+        // Role statystyki
+        const role = participant.teamPosition || 'UNKNOWN'
+        roleStats[role] = (roleStats[role] || 0) + 1
 
         // Analiza współgraczy (ci z tego samego teamu)
         const playerTeamId = participant.teamId
@@ -521,12 +532,26 @@ class MatchHistoryService {
         teammates.forEach(teammate => {
           const key = teammate.puuid
           if (!teammateStats[key]) {
+            // Użyj danych z match data (priorytet: riotIdName#riotIdTagline > summonerName > PUUID)
+            let displayName = 'Unknown Player'
+            if (teammate.riotIdName && teammate.riotIdTagline) {
+              displayName = `${teammate.riotIdName}#${teammate.riotIdTagline}`
+            } else if (teammate.summonerName) {
+              displayName = teammate.summonerName
+            } else if (teammate.riotIdName && !teammate.riotIdTagline) {
+              // Czasami mamy tylko riotIdName bez tagline
+              displayName = teammate.riotIdName
+            } else if (teammate.puuid) {
+              // Fallback - użyj krótkiego identyfikatora zamiast długiego PUUID
+              const shortId = teammate.puuid.substring(0, 8).toUpperCase()
+              displayName = `Gracz_${shortId}`
+            }
+            
             teammateStats[key] = { 
               games: 0, 
               wins: 0, 
               puuid: teammate.puuid,
-              riotIdName: teammate.riotIdName,
-              riotIdTagline: teammate.riotIdTagline
+              displayName: displayName
             }
           }
           teammateStats[key].games++
@@ -554,6 +579,23 @@ class MatchHistoryService {
       total: totalCS
     }
 
+    const damageScore = {
+      average: totalDamage / matches.length,
+      total: totalDamage
+    }
+
+    // Znajdź najczęściej graną rolę
+    let mostPlayedRole = { role: 'N/A', games: 0, percentage: 0 }
+    if (Object.keys(roleStats).length > 0) {
+      const sortedRoles = Object.entries(roleStats).sort((a, b) => b[1] - a[1])
+      const topRole = sortedRoles[0]
+      mostPlayedRole = {
+        role: topRole[0],
+        games: topRole[1],
+        percentage: (topRole[1] / matches.length) * 100
+      }
+    }
+
     const mainChampions = Object.entries(championStats)
       .map(([name, stats]) => ({
         name,
@@ -566,19 +608,46 @@ class MatchHistoryService {
       .slice(0, 3)
 
     // Top współgracze (minimum 2 gry, posortowani po liczbie gier)
-    const teammates = Object.entries(teammateStats)
-      .map(([puuid, stats]) => ({
-        puuid: stats.puuid,
-        name: stats.riotIdName ? `${stats.riotIdName}#${stats.riotIdTagline}` : 'Unknown Player',
-        games: stats.games,
-        wins: stats.wins,
-        winRate: (stats.wins / stats.games) * 100
-      }))
+    console.log('🤝 Processing teammates...')
+    const teammatesWithNames = await Promise.all(
+      Object.entries(teammateStats)
+        .map(async ([puuid, stats]) => {
+          let displayName = stats.displayName || 'Unknown Player'
+          
+          console.log(`👥 Processing teammate ${puuid}, current name: ${displayName}`)
+          
+          // Jeśli nie mamy nazwy z meczu, spróbuj pobrać z API
+          if (displayName === 'Unknown Player' && this.useRealAPI) {
+            try {
+              console.log(`🔍 Fetching account for teammate ${puuid}`)
+              const accountInfo = await this.getAccountByPuuid(stats.puuid, region)
+              if (accountInfo) {
+                displayName = `${accountInfo.gameName}#${accountInfo.tagLine}`
+                console.log(`✅ Found teammate name: ${displayName}`)
+              } else {
+                console.log(`⚠️ Could not find account for ${puuid}`)
+              }
+            } catch (error) {
+              console.warn(`❌ Error fetching account for PUUID ${stats.puuid}:`, error)
+            }
+          }
+          
+          return {
+            puuid: stats.puuid,
+            name: displayName,
+            games: stats.games,
+            wins: stats.wins,
+            winRate: (stats.wins / stats.games) * 100
+          }
+        })
+    )
+    
+    const teammates = teammatesWithNames
       .filter(teammate => teammate.games >= 2) // Minimum 2 gry żeby się liczyło
       .sort((a, b) => b.games - a.games)
       .slice(0, 5) // Top 5 współgraczy
 
-    return { overallKDA, winRate, mainChampions, csScore, teammates }
+    return { overallKDA, winRate, mainChampions, csScore, damageScore, mostPlayedRole, teammates }
   }
 
   private getContinentalRegion(region: string): string {
@@ -977,6 +1046,37 @@ class MatchHistoryService {
     }
     
     return championMap[championId] || `Champion${championId}`
+  }
+
+  async getAccountByPuuid(puuid: string, region: string = 'eun1'): Promise<AccountInfo | null> {
+    if (!this.useRealAPI) {
+      return null // Nie robimy mock data dla account info
+    }
+
+    try {
+      const continentalRegion = this.getContinentalRegion(region)
+      const url = `https://${continentalRegion}.api.riotgames.com/riot/account/v1/accounts/by-puuid/${puuid}`
+      
+      console.log(`🔍 Fetching account for PUUID ${puuid} in region ${continentalRegion}`)
+      
+      const response = await fetch(url, {
+        headers: {
+          'X-Riot-Token': this.apiKey
+        }
+      })
+
+      if (!response.ok) {
+        console.warn(`Could not fetch account for PUUID ${puuid}: ${response.status}`)
+        return null
+      }
+
+      const accountData: AccountInfo = await response.json()
+      console.log(`✅ Found account: ${accountData.gameName}#${accountData.tagLine}`)
+      return accountData
+    } catch (error) {
+      console.warn('Error fetching account by PUUID:', error)
+      return null
+    }
   }
 }
 
