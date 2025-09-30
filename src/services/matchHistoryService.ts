@@ -252,12 +252,12 @@ class MatchHistoryService {
     // Sprawdź czy mamy klucz API z environment variables
     try {
       // @ts-ignore - Vite env variables
-      this.apiKey = import.meta.env?.VITE_RIOT_API_KEY || 'RGAPI-2ae07381-ea16-4e1d-a42d-35e279cc7252'
+      this.apiKey = import.meta.env?.VITE_RIOT_API_KEY || 'RGAPI-83c2d1a5-3432-4157-8750-3d4035739b2a'
       this.useRealAPI = !!this.apiKey && this.apiKey !== 'your_api_key_here'
       console.log('API Key loaded:', this.useRealAPI ? 'YES' : 'NO', 'Length:', this.apiKey.length)
     } catch {
       // Fallback dla production
-      this.apiKey = 'RGAPI-2ae07381-ea16-4e1d-a42d-35e279cc7252'
+      this.apiKey = 'RGAPI-83c2d1a5-3432-4157-8750-3d4035739b2a'
       this.useRealAPI = true
       console.log('Using fallback API key')
     }
