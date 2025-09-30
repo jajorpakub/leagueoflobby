@@ -115,6 +115,6 @@ Po załadowaniu gracza zobaczysz:
 
 <div align="center">
 
-aha ok xd
+p.s to wszystko robi ai xd
 
 </div>

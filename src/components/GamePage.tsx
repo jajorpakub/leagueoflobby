@@ -5,6 +5,8 @@ import RandomPicks from './RandomPicks'
 import Auguments from './Auguments'
 import Items from './Items'
 import MatchHistory from './MatchHistory'
+import ChampionBuilds from './ChampionBuilds'
+import TeamRandomizer from './TeamRandomizer'
 import './GamePage.css'
 
 const gameData: Record<string, {
@@ -25,6 +27,12 @@ const gameData: Record<string, {
     color: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
     content: 'Losowanie championów do gier!'
   },
+  'losuj-druzyni': {
+    title: 'LOSUJ DRUŻYNY',
+    description: 'Przelosuj drużyny dla Arena, Clash lub custom games - idealne dla grup!',
+    color: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+    content: 'Losowanie drużyn dla gier teamowych!'
+  },
   'itemy': {
     title: 'ITEMY',
     description: 'Wszystkie przedmioty z League of Legends z filtrami i szczegółami',
@@ -36,6 +44,12 @@ const gameData: Record<string, {
     description: 'Wszystkie ulepszenia z Arena z podziałem na Silver/Gold/Pryzmatyczne',
     color: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)',
     content: 'Augumenty z trybu Arena!'
+  },
+  'champion-builds': {
+    title: 'BUILDS',
+    description: 'Aktualne build-y dla championów - itemy, runy, skill order',
+    color: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+    content: 'Build-y championów!'
   },
   'championy-nacje': {
     title: 'CHAMPIONY',
@@ -115,6 +129,18 @@ function GamePage() {
     )
   }
 
+  if (gameId === 'losuj-druzyni') {
+    return (
+      <div className="game-page">
+        <header className="game-header">
+          <Link to="/" className="back-btn">← Powrót</Link>
+          <h1>{game.title}</h1>
+        </header>
+        <TeamRandomizer />
+      </div>
+    )
+  }
+
   if (gameId === 'augumenty') {
     return (
       <div className="game-page">
@@ -135,6 +161,18 @@ function GamePage() {
           <h1>{game.title}</h1>
         </header>
         <Items />
+      </div>
+    )
+  }
+
+  if (gameId === 'champion-builds') {
+    return (
+      <div className="game-page">
+        <header className="game-header">
+          <Link to="/" className="back-btn">← Powrót</Link>
+          <h1>{game.title}</h1>
+        </header>
+        <ChampionBuilds />
       </div>
     )
   }

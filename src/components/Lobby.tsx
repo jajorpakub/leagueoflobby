@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import ApiStatus from './ApiStatus'
 import './Lobby.css'
 
 interface Game {
@@ -28,6 +29,14 @@ const games: Game[] = [
     icon: '🎰'
   },
   {
+    id: 'losuj-druzyni',
+    title: 'LOSUJ DRUŻYNY',
+    description: 'Przelosuj drużyny dla Arena, Clash lub custom games - idealne dla grup!',
+    color: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+    icon: '⚔️',
+    isNew: true
+  },
+  {
     id: 'itemy',
     title: 'ITEMY',
     description: 'Wszystkie przedmioty z League of Legends z filtrami i szczegółami',
@@ -40,6 +49,13 @@ const games: Game[] = [
     description: 'Wszystkie ulepszenia z Arena z podziałem na Silver/Gold/Pryzmatyczne',
     color: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)',
     icon: '🧭'
+  },
+  {
+    id: 'champion-builds',
+    title: 'BUILDS',
+    description: 'Aktualne build-y dla championów - itemy, runy, skill order',
+    color: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+    icon: '🔨'
   },
   {
     id: 'championy-nacje',
@@ -96,6 +112,8 @@ function Lobby() {
           ))}
         </div>
       </main>
+
+      <ApiStatus />
 
       <footer className="lobby-footer">
         <p>&copy; 2025 LoL Lobby. Nieoficjalny pomocnik dla League of Legends.</p>

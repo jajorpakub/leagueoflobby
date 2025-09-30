@@ -1,0 +1,178 @@
+.api-status {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 2rem auto;
+  max-width: 600px;
+  backdrop-filter: blur(10px);
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+
+.api-status-main {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.api-status-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+
+.api-status-info {
+  flex: 1;
+}
+
+.api-status-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.api-status-detail {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.api-refresh-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.api-refresh-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.api-refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  animation: spin 1s linear infinite;
+}
+
+.api-last-check {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.api-expiry-info {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  border-left: 4px solid;
+}
+
+.api-expiry-date {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.api-expiry-warning {
+  color: #f59e0b;
+  font-weight: 600;
+  font-size: 0.85rem;
+  animation: blink 2s infinite;
+}
+
+/* Status-specific styles */
+.status-connected {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.status-connected .api-status-text {
+  color: #10b981;
+}
+
+.status-connected .api-expiry-info {
+  border-left-color: #10b981;
+}
+
+.status-disconnected {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.status-disconnected .api-status-text {
+  color: #ef4444;
+}
+
+.status-disconnected .api-expiry-info {
+  border-left-color: #ef4444;
+}
+
+.status-expired {
+  border-color: rgba(220, 38, 38, 0.5);
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.status-expired .api-status-text {
+  color: #dc2626;
+}
+
+.status-expired .api-expiry-info {
+  border-left-color: #dc2626;
+}
+
+.status-checking {
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.status-checking .api-status-text {
+  color: #3b82f6;
+}
+
+.status-checking .api-expiry-info {
+  border-left-color: #3b82f6;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.5; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .api-status {
+    margin: 1rem;
+    padding: 1rem;
+  }
+  
+  .api-status-main {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .api-status-icon {
+    font-size: 2rem;
+  }
+  
+  .api-refresh-btn {
+    align-self: center;
+  }
+}
