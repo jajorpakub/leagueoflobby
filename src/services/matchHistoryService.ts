@@ -180,6 +180,68 @@ export interface Team {
   win: boolean
 }
 
+export interface LeagueEntry {
+  leagueId: string
+  summonerId: string
+  summonerName: string
+  queueType: string
+  tier: string
+  rank: string
+  leaguePoints: number
+  wins: number
+  losses: number
+  hotStreak: boolean
+  veteran: boolean
+  freshBlood: boolean
+  inactive: boolean
+  miniSeries?: {
+    target: number
+    wins: number
+    losses: number
+    progress: string
+  }
+}
+
+export interface ChampionMastery {
+  championId: number
+  championLevel: number
+  championPoints: number
+  lastPlayTime: number
+  championPointsSinceLastLevel: number
+  championPointsUntilNextLevel: number
+  chestGranted: boolean
+  tokensEarned: number
+  summonerId: string
+}
+
+export interface AdditionalStats {
+  rank: {
+    tier: string
+    division: string
+    lp: number
+    wins: number
+    losses: number
+  } | null
+  overallKDA: {
+    kills: number
+    deaths: number
+    assists: number
+    ratio: number
+  }
+  winRate: {
+    total: number
+    wins: number
+    percentage: number
+  }
+  mainChampions: Array<{
+    name: string
+    championId: number
+    games: number
+    winRate: number
+    mastery: number
+  }>
+}
+
 class MatchHistoryService {
   private static instance: MatchHistoryService
   private apiKey: string = ''
@@ -291,14 +353,14 @@ class MatchHistoryService {
     return result.summoner
   }
 
-  async getMatchHistory(puuid: string, count: number = 10, region: string = 'eun1'): Promise<string[]> {
+  async getMatchHistory(puuid: string, count: number = 10, region: string = 'eun1', startIndex: number = 0): Promise<string[]> {
     if (!this.useRealAPI) {
       return this.getMockMatchHistory(count)
     }
 
     try {
       const continentalRegion = this.getContinentalRegion(region)
-      const url = `https://${continentalRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=${count}`
+      const url = `https://${continentalRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${startIndex}&count=${count}`
       
       console.log('Fetching match history from:', url)
       
@@ -348,6 +410,175 @@ class MatchHistoryService {
       console.error('Error fetching match details:', error)
       throw error
     }
+  }
+
+  async getLeagueEntries(summonerId: string, region: string = 'eun1'): Promise<LeagueEntry[]> {
+    if (!this.useRealAPI) {
+      return this.getMockLeagueEntries()
+    }
+
+    try {
+      const url = `https://${region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}`
+      
+      const response = await fetch(url, {
+        headers: {
+          'X-Riot-Token': this.apiKey
+        }
+      })
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          return [] // Gracz nie ma rangi
+        }
+        throw new Error(`Błąd pobierania rangi: ${response.status}`)
+      }
+
+      const leagueData = await response.json()
+      return leagueData
+    } catch (error) {
+      console.error('Error fetching league entries:', error)
+      return [] // Zwracamy pustą tablicę zamiast rzucać błąd
+    }
+  }
+
+  async getChampionMastery(summonerId: string, region: string = 'eun1'): Promise<ChampionMastery[]> {
+    if (!this.useRealAPI) {
+      return this.getMockChampionMastery()
+    }
+
+    try {
+      const url = `https://${region}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/${summonerId}`
+      
+      const response = await fetch(url, {
+        headers: {
+          'X-Riot-Token': this.apiKey
+        }
+      })
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          return [] // Gracz nie ma champion mastery
+        }
+        throw new Error(`Błąd pobierania champion mastery: ${response.status}`)
+      }
+
+      const masteryData = await response.json()
+      return masteryData.slice(0, 5) // Top 5 championów
+    } catch (error) {
+      console.error('Error fetching champion mastery:', error)
+      return [] // Zwracamy pustą tablicę zamiast rzucać błąd
+    }
+  }
+
+  async calculateStatsFromMatches(matches: MatchInfo[], targetPuuid: string): Promise<{ overallKDA: any; winRate: any; mainChampions: any[]; csScore: any; teammates: any[] }> {
+    if (matches.length === 0) {
+      return {
+        overallKDA: { kills: 0, deaths: 0, assists: 0, ratio: 0 },
+        winRate: { total: 0, wins: 0, percentage: 0 },
+        mainChampions: [],
+        csScore: { average: 0, perMinute: 0, total: 0 },
+        teammates: []
+      }
+    }
+
+    let totalKills = 0
+    let totalDeaths = 0
+    let totalAssists = 0
+    let totalWins = 0
+    let totalCS = 0
+    let totalGameTime = 0
+    const championStats: { [key: string]: { games: number; wins: number; championId: number } } = {}
+    const teammateStats: { [key: string]: { games: number; wins: number; puuid: string; riotIdName?: string; riotIdTagline?: string } } = {}
+
+    matches.forEach(match => {
+      const participant = match.info.participants.find(p => p.puuid === targetPuuid)
+      if (participant) {
+        // Podstawowe statystyki
+        totalKills += participant.kills
+        totalDeaths += participant.deaths
+        totalAssists += participant.assists
+        if (participant.win) totalWins++
+
+        // CS statystyki
+        const cs = participant.totalMinionsKilled + participant.neutralMinionsKilled
+        totalCS += cs
+        totalGameTime += match.info.gameDuration
+
+        // Champion statystyki
+        const champName = participant.championName
+        if (!championStats[champName]) {
+          championStats[champName] = { games: 0, wins: 0, championId: participant.championId }
+        }
+        championStats[champName].games++
+        if (participant.win) championStats[champName].wins++
+
+        // Analiza współgraczy (ci z tego samego teamu)
+        const playerTeamId = participant.teamId
+        const teammates = match.info.participants.filter(p => 
+          p.teamId === playerTeamId && p.puuid !== targetPuuid
+        )
+
+        teammates.forEach(teammate => {
+          const key = teammate.puuid
+          if (!teammateStats[key]) {
+            teammateStats[key] = { 
+              games: 0, 
+              wins: 0, 
+              puuid: teammate.puuid,
+              riotIdName: teammate.riotIdName,
+              riotIdTagline: teammate.riotIdTagline
+            }
+          }
+          teammateStats[key].games++
+          if (participant.win) teammateStats[key].wins++
+        })
+      }
+    })
+
+    const overallKDA = {
+      kills: totalKills / matches.length,
+      deaths: totalDeaths / matches.length,
+      assists: totalAssists / matches.length,
+      ratio: totalDeaths > 0 ? (totalKills + totalAssists) / totalDeaths : totalKills + totalAssists
+    }
+
+    const winRate = {
+      total: matches.length,
+      wins: totalWins,
+      percentage: (totalWins / matches.length) * 100
+    }
+
+    const csScore = {
+      average: totalCS / matches.length,
+      perMinute: totalGameTime > 0 ? (totalCS / (totalGameTime / 60)) : 0,
+      total: totalCS
+    }
+
+    const mainChampions = Object.entries(championStats)
+      .map(([name, stats]) => ({
+        name,
+        championId: stats.championId,
+        games: stats.games,
+        winRate: (stats.wins / stats.games) * 100,
+        mastery: 0 // Zostanie uzupełnione przez champion mastery API
+      }))
+      .sort((a, b) => b.games - a.games)
+      .slice(0, 3)
+
+    // Top współgracze (minimum 2 gry, posortowani po liczbie gier)
+    const teammates = Object.entries(teammateStats)
+      .map(([puuid, stats]) => ({
+        puuid: stats.puuid,
+        name: stats.riotIdName ? `${stats.riotIdName}#${stats.riotIdTagline}` : 'Unknown Player',
+        games: stats.games,
+        wins: stats.wins,
+        winRate: (stats.wins / stats.games) * 100
+      }))
+      .filter(teammate => teammate.games >= 2) // Minimum 2 gry żeby się liczyło
+      .sort((a, b) => b.games - a.games)
+      .slice(0, 5) // Top 5 współgraczy
+
+    return { overallKDA, winRate, mainChampions, csScore, teammates }
   }
 
   private getContinentalRegion(region: string): string {
@@ -642,6 +873,110 @@ class MatchHistoryService {
 
   isUsingRealAPI(): boolean {
     return this.useRealAPI
+  }
+
+  private async getMockLeagueEntries(): Promise<LeagueEntry[]> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([{
+          leagueId: 'mock-league',
+          summonerId: 'mock-summoner',
+          summonerName: 'MockPlayer',
+          queueType: 'RANKED_SOLO_5x5',
+          tier: 'GOLD',
+          rank: 'II',
+          leaguePoints: 45,
+          wins: 67,
+          losses: 53,
+          hotStreak: false,
+          veteran: false,
+          freshBlood: false,
+          inactive: false
+        }])
+      }, 300)
+    })
+  }
+
+  private async getMockChampionMastery(): Promise<ChampionMastery[]> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([
+          {
+            championId: 222, // Jinx
+            championLevel: 7,
+            championPoints: 125000,
+            lastPlayTime: Date.now() - 86400000,
+            championPointsSinceLastLevel: 0,
+            championPointsUntilNextLevel: 0,
+            chestGranted: true,
+            tokensEarned: 3,
+            summonerId: 'mock-summoner'
+          },
+          {
+            championId: 51, // Caitlyn
+            championLevel: 6,
+            championPoints: 85000,
+            lastPlayTime: Date.now() - 172800000,
+            championPointsSinceLastLevel: 0,
+            championPointsUntilNextLevel: 40000,
+            chestGranted: false,
+            tokensEarned: 2,
+            summonerId: 'mock-summoner'
+          },
+          {
+            championId: 81, // Ezreal
+            championLevel: 5,
+            championPoints: 45000,
+            lastPlayTime: Date.now() - 259200000,
+            championPointsSinceLastLevel: 0,
+            championPointsUntilNextLevel: 15000,
+            chestGranted: true,
+            tokensEarned: 0,
+            summonerId: 'mock-summoner'
+          }
+        ])
+      }, 400)
+    })
+  }
+
+  async getChampionNameById(championId: number): Promise<string> {
+    const championMap: { [key: number]: string } = {
+      1: 'Annie', 2: 'Olaf', 3: 'Galio', 4: 'TwistedFate', 5: 'XinZhao',
+      6: 'Urgot', 7: 'LeBlanc', 8: 'Vladimir', 9: 'Fiddlesticks', 10: 'Kayle',
+      11: 'MasterYi', 12: 'Alistar', 13: 'Ryze', 14: 'Sion', 15: 'Sivir',
+      16: 'Soraka', 17: 'Teemo', 18: 'Tristana', 19: 'Warwick', 20: 'Nunu',
+      21: 'MissFortune', 22: 'Ashe', 23: 'Tryndamere', 24: 'Jax', 25: 'Morgana',
+      26: 'Zilean', 27: 'Singed', 28: 'Evelynn', 29: 'Twitch', 30: 'Karthus',
+      31: 'Chogath', 32: 'Amumu', 33: 'Rammus', 34: 'Anivia', 35: 'Shaco',
+      36: 'DrMundo', 37: 'Sona', 38: 'Kassadin', 39: 'Irelia', 40: 'Janna',
+      41: 'Gangplank', 42: 'Corki', 43: 'Karma', 44: 'Taric', 45: 'Veigar',
+      48: 'Trundle', 50: 'Swain', 51: 'Caitlyn', 53: 'Blitzcrank', 54: 'Malphite',
+      55: 'Katarina', 56: 'Nocturne', 57: 'Maokai', 58: 'Renekton', 59: 'JarvanIV',
+      60: 'Elise', 61: 'Orianna', 62: 'Wukong', 63: 'Brand', 64: 'LeeSin',
+      67: 'Vayne', 68: 'Rumble', 69: 'Cassiopeia', 72: 'Skarner', 74: 'Heimerdinger',
+      75: 'Nasus', 76: 'Nidalee', 77: 'Udyr', 78: 'Poppy', 79: 'Gragas',
+      80: 'Pantheon', 81: 'Ezreal', 82: 'Mordekaiser', 83: 'Yorick', 84: 'Akali',
+      85: 'Kennen', 86: 'Garen', 89: 'Leona', 90: 'Malzahar', 91: 'Talon',
+      92: 'Riven', 96: 'KogMaw', 98: 'Shen', 99: 'Lux', 101: 'Xerath',
+      102: 'Shyvana', 103: 'Ahri', 104: 'Graves', 105: 'Fizz', 106: 'Volibear',
+      107: 'Rengar', 110: 'Varus', 111: 'Nautilus', 112: 'Viktor', 113: 'Sejuani',
+      114: 'Fiora', 115: 'Ziggs', 117: 'Lulu', 119: 'Draven', 120: 'Hecarim',
+      121: 'Khazix', 122: 'Darius', 126: 'Jayce', 127: 'Lissandra', 131: 'Diana',
+      133: 'Quinn', 134: 'Syndra', 136: 'AurelionSol', 141: 'Kayn', 142: 'Zoe',
+      143: 'Zyra', 145: 'Kaisa', 147: 'Seraphine', 150: 'Gnar', 154: 'Zac',
+      157: 'Yasuo', 161: 'Velkoz', 163: 'Taliyah', 164: 'Camille', 166: 'Akshan',
+      200: 'Belveth', 201: 'Braum', 202: 'Jhin', 203: 'Kindred', 221: 'Zeri',
+      222: 'Jinx', 223: 'TahmKench', 234: 'Viego', 235: 'Senna', 236: 'Lucian',
+      238: 'Zed', 240: 'Kled', 245: 'Ekko', 246: 'Qiyana', 254: 'Vi',
+      266: 'Aatrox', 267: 'Nami', 268: 'Azir', 350: 'Yuumi', 360: 'Samira',
+      412: 'Thresh', 420: 'Illaoi', 421: 'RekSai', 427: 'Ivern', 429: 'Kalista',
+      432: 'Bard', 516: 'Ornn', 517: 'Sylas', 518: 'Neeko', 523: 'Aphelios',
+      526: 'Rell', 555: 'Pyke', 777: 'Yone', 875: 'Sett', 876: 'Lillia',
+      887: 'Gwen', 888: 'Renata', 895: 'Nilah', 897: 'KSante', 901: 'Smolder',
+      902: 'Milio', 910: 'Hwei', 950: 'Naafiri'
+    }
+    
+    return championMap[championId] || `Champion${championId}`
   }
 }
 
