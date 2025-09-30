@@ -115,8 +115,6 @@ Po załadowaniu gracza zobaczysz:
 
 <div align="center">
 
-**Aplikacja stworzona z miłością do League of Legends i dobrego humoru** ❤️
-
-*Nie, nie możesz tego skopiować. To nasze!* 😎
+aha ok xd
 
 </div>
