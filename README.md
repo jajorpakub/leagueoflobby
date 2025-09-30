@@ -9,23 +9,7 @@
 
 **Zaawansowana aplikacja do analizy statystyk graczy League of Legends z unikalnym systemem oceny wydajności**
 
-[🚀 Demo](#-funkcje) • [📊 Funkcje](#-funkcje) • [🛠️ Instalacja](#️-instalacja) • [💻 Użycie](#-użycie)
-
 </div>
-
----
-
-## 📋 Spis Treści
-
-- [🎯 O Projekcie](#-o-projekcie)
-- [✨ Funkcje](#-funkcje)
-- [🛠️ Technologie](#️-technologie)
-- [🚀 Instalacja](#-instalacja)
-- [💻 Użycie](#-użycie)
-- [🎨 Zrzuty Ekranu](#-zrzuty-ekranu)
-- [🔧 Konfiguracja](#-konfiguracja)
-- [📈 Roadmapa](#-roadmapa)
-- [🤝 Współpraca](#-współpraca)
 
 ---
 
@@ -96,66 +80,9 @@ Nasza aplikacja zawiera humorystyczny, ale precyzyjny system oceny wydajności g
   - `league-v4` - rankingi
   - `champion-mastery-v4` - mastery championów
 
-### Storage & Performance
-- **LocalStorage** - cache dla suggestions i recent searches
-- **Synchronous Loading** - reliable data fetching
-- **Debounced Search** - optymalizacja wydajności
-- **Memory Management** - smart caching strategies
-
 ---
 
-## 🚀 Instalacja
-
-### Wymagania
-- **Node.js** 16.x lub nowszy
-- **npm** lub **yarn**
-- **Riot Games API Key** (bezpłatny)
-
-### Kroki
-
-1. **Sklonuj repozytorium**
-```bash
-git clone https://github.com/your-username/league-of-lobby.git
-cd league-of-lobby
-```
-
-2. **Zainstaluj dependencies**
-```bash
-npm install
-# lub
-yarn install
-```
-
-3. **Konfiguracja API Key**
-```bash
-# Skopiuj przykładowy plik konfiguracji
-cp .env.example .env
-
-# Edytuj .env i dodaj swój API key
-VITE_RIOT_API_KEY=twój_api_key_tutaj
-```
-
-4. **Uruchom development server**
-```bash
-npm run dev
-# lub
-yarn dev
-```
-
-5. **Otwórz przeglądarkę**
-```
-http://localhost:5173
-```
-
-### Build Production
-```bash
-npm run build
-npm run preview
-```
-
----
-
-## 💻 Użycie
+## � Jak Korzystać
 
 ### 🔍 Wyszukiwanie Gracza
 
@@ -172,134 +99,24 @@ Po załadowaniu gracza zobaczysz:
 - **Grid ze statystykami** - KDA, winrate, CS, damage, rola
 - **Historia meczów** - ostatnie 10 gier z szczegółami
 
-### 🎯 System "Fujara"
+### 🎯 Skala "Fujary"
 
 ```
-📏 Skala Fujary:
-🟢 0-10cm   - Excellent (KDA > 3.0, Winrate > 65%)
-🟡 10-20cm  - Good (KDA > 2.0, Winrate > 50%)
-🟠 20-25cm  - Average (KDA > 1.0, Winrate > 40%)
-🔴 25-30cm  - Needs Improvement (KDA < 1.0, Winrate < 40%)
+📏 Skala Fujary (algorytm reverse logic):
+🟢 0-10cm   - Potrzebuje poprawy (KDA < 1.0, Winrate < 40%)
+🟡 10-20cm  - Średnio (KDA > 1.0, Winrate > 40%)
+🟠 20-25cm  - Dobrze (KDA > 2.0, Winrate > 50%)
+🔴 25-30cm  - Excellent (KDA > 3.0, Winrate > 65%)
 ```
 
----
-
-## 🎨 Zrzuty Ekranu
-
-### 🏠 Główny Ekran
-*[Miejsce na screenshot głównego interfejsu]*
-
-### 🔍 Smart Autocomplete
-*[Miejsce na screenshot dropdown suggestions]*
-
-### 📊 Dashboard Gracza
-*[Miejsce na screenshot z pełnymi statystykami]*
-
-### 📱 Mobile View
-*[Miejsce na screenshot responsive design]*
-
----
-
-## 🔧 Konfiguracja
-
-### Environment Variables
-```env
-# Riot Games API
-VITE_RIOT_API_KEY=RGAPI-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-
-# Optional: Custom API endpoints
-VITE_API_BASE_URL=https://api.riotgames.com
-
-# Optional: Debug mode
-VITE_DEBUG_MODE=false
-```
-
-### Supported Regions
-```typescript
-'eun1' | 'euw1' | 'na1' | 'kr' | 'jp1' | 'br1' | 
-'la1' | 'la2' | 'oc1' | 'tr1' | 'ru'
-```
-
----
-
-## 📈 Roadmapa
-
-### 🚧 W Trakcie
-- [ ] **Champion Mastery Charts** - wykresy mastery punktów
-- [ ] **Detailed Match Timeline** - timeline wydarzeń w meczu
-- [ ] **Comparison Tool** - porównanie dwóch graczy
-
-### 🎯 Planowane
-- [ ] **Team Analysis** - analiza całych drużyn
-- [ ] **Tournament Mode** - śledzenie turniejów
-- [ ] **Achievement System** - system osiągnięć
-- [ ] **Export to PDF** - raporty do pobrania
-- [ ] **Social Features** - udostępnianie statystyk
-- [ ] **Live Game Tracker** - śledzenie gier na żywo
-
-### 💡 Pomysły na Przyszłość
-- [ ] **Machine Learning Predictions** - przewidywanie wyników
-- [ ] **VOD Review Integration** - analiza nagrań
-- [ ] **Coaching Tools** - narzędzia dla trenerów
-- [ ] **Mobile App** - natywna aplikacja mobilna
-
----
-
-## 🤝 Współpraca
-
-Zachęcamy do współpracy! Jeśli chcesz przyczynić się do rozwoju projektu:
-
-### 🐛 Zgłaszanie Błędów
-1. Sprawdź czy błąd nie został już zgłoszony
-2. Użyj template do issue
-3. Dołącz szczegółowy opis i kroki reprodukcji
-
-### 💡 Sugestie Funkcji
-1. Otwórz Feature Request issue
-2. Opisz przypadek użycia
-3. Dołącz mockupy jeśli możliwe
-
-### 🔧 Pull Requests
-1. Fork repozytorium
-2. Stwórz feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit zmiany (`git commit -m 'Add amazing feature'`)
-4. Push branch (`git push origin feature/amazing-feature`)
-5. Otwórz Pull Request
-
-### 📝 Coding Standards
-- **TypeScript** - używaj statycznego typowania
-- **ESLint** - przestrzegaj reguł lintera
-- **Prettier** - formatuj kod automatycznie
-- **Conventional Commits** - używaj standardowych commitów
-
----
-
-## 📄 Licencja
-
-Ten projekt jest na licencji **MIT** - zobacz [LICENSE](LICENSE) dla szczegółów.
-
----
-
-## 🙏 Podziękowania
-
-- **Riot Games** - za udostępnienie oficjalnego API
-- **React Team** - za wspaniały framework
-- **Community** - za feedback i sugestie
-
----
-
-## 📞 Kontakt
-
-- **GitHub Issues** - zgłaszanie błędów i sugestii
-- **Email** - [your-email@example.com](mailto:your-email@example.com)
-- **Discord** - [Link do serwera Discord](https://discord.gg/your-server)
+*Im gorsze statystyki, tym dłuższa fujara! �*
 
 ---
 
 <div align="center">
 
-**Zrobione z ❤️ dla społeczności League of Legends**
+**Aplikacja stworzona z miłością do League of Legends i dobrego humoru** ❤️
 
-⭐ **Jeśli podoba Ci się projekt, zostaw gwiazdkę!** ⭐
+*Nie, nie możesz tego skopiować. To nasze!* 😎
 
 </div>
