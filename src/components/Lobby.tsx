@@ -28,13 +28,6 @@ const games: Game[] = [
     icon: '🎰'
   },
   {
-    id: 'przejdziemy-po-poprawkach',
-    title: 'PRZEJDZIEMY PO POPRAWKACH',
-    description: 'Sprawdź najnowsze zmiany w patchu i jak wpływają na gameplay',
-    color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-    icon: '📋'
-  },
-  {
     id: 'itemy',
     title: 'ITEMY',
     description: 'Wszystkie przedmioty z League of Legends z filtrami i szczegółami',

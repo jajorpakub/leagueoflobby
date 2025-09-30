@@ -25,12 +25,6 @@ const gameData: Record<string, {
     color: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
     content: 'Losowanie championów do gier!'
   },
-  'przejdziemy-po-poprawkach': {
-    title: 'PRZEJDZIEMY PO POPRAWKACH',
-    description: 'Sprawdź najnowsze zmiany w patchu i jak wpływają na gameplay',
-    color: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-    content: 'Analiza zmian w najnowszym patchu!'
-  },
   'itemy': {
     title: 'ITEMY',
     description: 'Wszystkie przedmioty z League of Legends z filtrami i szczegółami',
@@ -141,30 +135,6 @@ function GamePage() {
           <h1>{game.title}</h1>
         </header>
         <Items />
-      </div>
-    )
-  }
-
-  if (gameId === 'przejdziemy-po-poprawkach') {
-    return (
-      <div className="game-page">
-        <header className="game-header">
-          <Link to="/" className="back-btn">← Powrót</Link>
-          <h1>{game.title}</h1>
-        </header>
-        <div className="game-content">
-          <div className="feature-placeholder">
-            <h2>📋 Analiza Poprawek</h2>
-            <p>Ta funkcja jest w przygotowaniu. Tutaj będziesz mógł sprawdzić:</p>
-            <ul>
-              <li>• Najnowsze zmiany w patchu</li>
-              <li>• Buffy i nerfy championów</li>
-              <li>• Zmiany w itemach</li>
-              <li>• Meta analysis</li>
-              <li>• Tier listy po patchu</li>
-            </ul>
-          </div>
-        </div>
       </div>
     )
   }
