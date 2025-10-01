@@ -18,6 +18,19 @@
   z-index: 100;
 }
 
+.back-to-main {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  transition: color 0.3s ease;
+}
+
+.back-to-main:hover {
+  color: #fbbf24;
+}
+
 .logo h1 {
   background: linear-gradient(45deg, #fbbf24, #f59e0b, #d97706);
   background-clip: text;

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import ApiStatus from './ApiStatus'
-import './Lobby.css'
+import './LoLLobby.css'
 
 interface Game {
   id: string
@@ -73,14 +73,15 @@ const games: Game[] = [
   }
 ]
 
-function Lobby() {
+function LoLLobby() {
   const [hoveredGame, setHoveredGame] = useState<string | null>(null)
 
   return (
     <div className="lobby">
       <header className="lobby-header">
         <div className="logo">
-          <h1>lol-lobby</h1>
+          <Link to="/" className="back-to-main">← Wszystkie gry</Link>
+          <h1>League of Legends</h1>
         </div>
         <nav className="nav-menu">
           <button className="menu-btn">☰</button>
@@ -92,7 +93,7 @@ function Lobby() {
           {games.map((game, index) => (
             <Link
               key={game.id}
-              to={`/game/${game.id}`}
+              to={`/lol/${game.id}`}
               className="game-card"
               style={{
                 background: game.color,
@@ -116,10 +117,10 @@ function Lobby() {
       <ApiStatus />
 
       <footer className="lobby-footer">
-        <p>&copy; 2025 LoL Lobby. Nieoficjalny pomocnik dla League of Legends.</p>
+        <p>&copy; 2025 GG-Lobby. Nieoficjalny pomocnik dla League of Legends.</p>
       </footer>
     </div>
   )
 }
 
-export default Lobby
+export default LoLLobby

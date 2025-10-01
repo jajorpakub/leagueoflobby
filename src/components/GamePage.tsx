@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useLocation } from 'react-router-dom'
 import ChampionsRegions from './ChampionsRegions'
 import ChampionEffects from './ChampionEffects'
 import RandomPicks from './RandomPicks'
@@ -66,26 +66,37 @@ const gameData: Record<string, {
 }
 
 function GamePage() {
-  const { gameId } = useParams<{ gameId: string }>()
-  const game = gameId ? gameData[gameId] : null
+  const { gameId, toolId } = useParams<{ gameId?: string; toolId?: string }>()
+  const location = useLocation()
+  
+  // Ustal czy to jest LoL tool czy Universal tool
+  const isLolTool = location.pathname.startsWith('/lol/')
+  const isUniversalTool = location.pathname.startsWith('/universal/')
+  const currentToolId = gameId || toolId
+  
+  // Określ ścieżkę powrotu
+  const backPath = isLolTool ? '/lol' : isUniversalTool ? '/' : '/'
+  const backLabel = isLolTool ? '← Powrót do LoL' : '← Powrót do lobby'
+  
+  const game = currentToolId ? gameData[currentToolId] : null
 
   if (!game) {
     return (
       <div className="game-page">
         <div className="game-not-found">
-          <h1>Gra nie została znaleziona!</h1>
-          <Link to="/" className="back-btn">Powrót do lobby</Link>
+          <h1>Narzędzie nie zostało znalezione!</h1>
+          <Link to={backPath} className="back-btn">Powrót do lobby</Link>
         </div>
       </div>
     )
   }
 
   // Routing dla dedykowanych komponentów
-  if (gameId === 'ostatnie-gierki') {
+  if (currentToolId === 'ostatnie-gierki') {
     return (
       <div className="game-page">
         <header className="game-header">
-          <Link to="/" className="back-btn">← Powrót</Link>
+          <Link to={backPath} className="back-btn">{backLabel}</Link>
           <h1>{game.title}</h1>
         </header>
         <MatchHistory />
@@ -93,11 +104,11 @@ function GamePage() {
     )
   }
 
-  if (gameId === 'championy-nacje') {
+  if (currentToolId === 'championy-nacje') {
     return (
       <div className="game-page">
         <header className="game-header">
-          <Link to="/" className="back-btn">← Powrót</Link>
+          <Link to={backPath} className="back-btn">{backLabel}</Link>
           <h1>{game.title}</h1>
         </header>
         <ChampionsRegions />
@@ -105,11 +116,11 @@ function GamePage() {
     )
   }
 
-  if (gameId === 'efekty-championow') {
+  if (currentToolId === 'efekty-championow') {
     return (
       <div className="game-page">
         <header className="game-header">
-          <Link to="/" className="back-btn">← Powrót</Link>
+          <Link to={backPath} className="back-btn">{backLabel}</Link>
           <h1>{game.title}</h1>
         </header>
         <ChampionEffects />
@@ -117,11 +128,11 @@ function GamePage() {
     )
   }
 
-  if (gameId === 'losuj-picki') {
+  if (currentToolId === 'losuj-picki') {
     return (
       <div className="game-page">
         <header className="game-header">
-          <Link to="/" className="back-btn">← Powrót</Link>
+          <Link to={backPath} className="back-btn">{backLabel}</Link>
           <h1>{game.title}</h1>
         </header>
         <RandomPicks />
@@ -129,11 +140,11 @@ function GamePage() {
     )
   }
 
-  if (gameId === 'losuj-druzyni') {
+  if (currentToolId === 'losuj-druzyni') {
     return (
       <div className="game-page">
         <header className="game-header">
-          <Link to="/" className="back-btn">← Powrót</Link>
+          <Link to={backPath} className="back-btn">{backLabel}</Link>
           <h1>{game.title}</h1>
         </header>
         <TeamRandomizer />
@@ -141,11 +152,11 @@ function GamePage() {
     )
   }
 
-  if (gameId === 'augumenty') {
+  if (currentToolId === 'augumenty') {
     return (
       <div className="game-page">
         <header className="game-header">
-          <Link to="/" className="back-btn">← Powrót</Link>
+          <Link to={backPath} className="back-btn">{backLabel}</Link>
           <h1>{game.title}</h1>
         </header>
         <Auguments />
@@ -153,11 +164,11 @@ function GamePage() {
     )
   }
 
-  if (gameId === 'itemy') {
+  if (currentToolId === 'itemy') {
     return (
       <div className="game-page">
         <header className="game-header">
-          <Link to="/" className="back-btn">← Powrót</Link>
+          <Link to={backPath} className="back-btn">{backLabel}</Link>
           <h1>{game.title}</h1>
         </header>
         <Items />
@@ -165,11 +176,11 @@ function GamePage() {
     )
   }
 
-  if (gameId === 'champion-builds') {
+  if (currentToolId === 'champion-builds') {
     return (
       <div className="game-page">
         <header className="game-header">
-          <Link to="/" className="back-btn">← Powrót</Link>
+          <Link to={backPath} className="back-btn">{backLabel}</Link>
           <h1>{game.title}</h1>
         </header>
         <ChampionBuilds />
@@ -181,7 +192,7 @@ function GamePage() {
   return (
     <div className="game-page">
       <header className="game-header">
-        <Link to="/" className="back-btn">← Powrót</Link>
+        <Link to={backPath} className="back-btn">{backLabel}</Link>
         <h1>{game.title}</h1>
       </header>
       <div className="game-content">
