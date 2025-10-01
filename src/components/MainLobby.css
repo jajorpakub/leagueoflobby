@@ -121,11 +121,13 @@
 .game-card[data-game="universal"] {
   background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7)), 
                     url('https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&q=80');
+  cursor: not-allowed;
 }
 
 .game-card[data-game="wot"] {
   background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7)), 
                     url('https://c4.wallpaperflare.com/wallpaper/841/52/62/england-uk-wot-world-of-tanks-wallpaper-preview.jpg');
+  cursor: not-allowed;
 }
 
 .game-card::before {
