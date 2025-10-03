@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getUserStats, canPlayToday, type UserStats } from '../utils/userFingerprint'
+import Header from './Header'
 import './LoLGuess.css'
 
 interface GameMode {
@@ -76,15 +77,11 @@ function LoLGuess() {
 
   return (
     <div className="lol-guess">
-      <header className="lol-guess-header">
-        <div className="header-top">
-          <Link to="/daily" className="back-btn">← Daily Gierki</Link>
-          <div className="header-content">
-            <h1>🎮 LoLGuess</h1>
-            <p>Codzienne wyzwania dla fanów League of Legends</p>
-          </div>
-        </div>
-      </header>
+      <Header 
+        title="🎮 LoLGuess" 
+        subtitle="Codzienne wyzwania dla fanów League of Legends" 
+        customBackPath="/daily"
+      />
 
       <main className="lol-guess-content">
         {userStats && (
@@ -158,6 +155,10 @@ function LoLGuess() {
               <div className="mode-footer">
                 {mode.id === 'champion' ? (
                   <Link to="/daily/lolguess/champion" className="play-btn">
+                    Zagraj teraz
+                  </Link>
+                ) : mode.id === 'ability' ? (
+                  <Link to="/daily/lolguess/ability" className="play-btn">
                     Zagraj teraz
                   </Link>
                 ) : (

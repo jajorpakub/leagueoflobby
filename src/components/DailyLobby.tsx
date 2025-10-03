@@ -7,7 +7,6 @@ interface DailyGame {
   description: string
   icon: string
   status: 'active' | 'coming-soon'
-  difficulty: 'easy' | 'medium' | 'hard'
 }
 
 const dailyGames: DailyGame[] = [
@@ -16,45 +15,18 @@ const dailyGames: DailyGame[] = [
     title: 'LOLGUESS',
     description: 'Zgaduj championów po podpowiedziach, umiejętnościach i splash artach',
     icon: '🎯',
-    status: 'active',
-    difficulty: 'medium'
+    status: 'active'
   },
   {
-    id: 'rune-master',
-    title: 'RUNE MASTER',
-    description: 'Zgaduj które runy pasują do danego championa',
-    icon: '📜',
-    status: 'coming-soon',
-    difficulty: 'hard'
-  },
-  {
-    id: 'item-builder',
-    title: 'ITEM BUILDER',
-    description: 'Zbuduj optymalne itemy dla randomowego championa',
-    icon: '⚔️',
-    status: 'coming-soon',
-    difficulty: 'medium'
-  },
-  {
-    id: 'map-master',
-    title: 'MAP MASTER',
-    description: 'Rozpoznaj lokacje na mapie Summoner\'s Rift',
-    icon: '🗺️',
-    status: 'coming-soon',
-    difficulty: 'easy'
+    id: 'wordle',
+    title: 'WORDLE',
+    description: 'Zgaduj daily słowo w 6 próbach',
+    icon: '📝',
+    status: 'active'
   }
 ]
 
 function DailyLobby() {
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'easy': return '#10b981'
-      case 'medium': return '#f59e0b'
-      case 'hard': return '#ef4444'
-      default: return '#6b7280'
-    }
-  }
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
@@ -114,12 +86,6 @@ function DailyLobby() {
                 <p className="game-description">{game.description}</p>
                 
                 <div className="game-footer">
-                  <div 
-                    className="difficulty-badge"
-                    style={{ backgroundColor: getDifficultyColor(game.difficulty) }}
-                  >
-                    {game.difficulty.toUpperCase()}
-                  </div>
                   {game.status === 'active' && (
                     <span className="play-btn">Graj →</span>
                   )}

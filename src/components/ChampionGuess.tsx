@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Header from './Header';
 import './ChampionGuess.css';
 import { 
   CHAMPION_STATIC_DATA, 
@@ -197,15 +198,14 @@ const ChampionGuess: React.FC = () => {
 
   return (
     <div className="champion-guess">
-      <header className="header">
-        <Link to="/daily/lolguess" className="back-btn">
-          ← Powrót
-        </Link>
-        <h1>Champion Guess</h1>
-        <div className="attempts">
+      <Header 
+        title="Champion Guess" 
+        subtitle="Zgadnij championa na podstawie cech!" 
+      />
+      <div className="game-content">
+        <div className="attempts-info">
           Próby: {guesses.length}/10
         </div>
-      </header>
 
       <main className="main-content">
         {alreadyPlayedToday && dailyChampion && todayResult && (
@@ -385,6 +385,7 @@ const ChampionGuess: React.FC = () => {
           </div>
         )}
       </main>
+      </div>
     </div>
   );
 };

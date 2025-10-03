@@ -205,15 +205,6 @@
   margin-top: auto;
 }
 
-.difficulty-badge {
-  padding: 0.4rem 0.8rem;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: white;
-  text-transform: uppercase;
-}
-
 .play-btn {
   color: #fbbf24;
   font-weight: 600;

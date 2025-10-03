@@ -1,0 +1,260 @@
+/* Wordle - Polish Word Game */
+.wordle {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #0a1428 0%, #1e2328 50%, #3c3c41 100%);
+  min-height: 100vh;
+  color: #f0e6d2;
+  font-family: 'Spiegel', sans-serif;
+}
+
+.game-info-bar {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 30px;
+  padding: 15px;
+  background: rgba(30, 35, 40, 0.6);
+  border-radius: 12px;
+  border: 1px solid #c8aa6e;
+}
+
+.game-info-bar .attempts,
+.game-info-bar .date {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #c8aa6e;
+}
+
+/* Message Popup */
+.message-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  border: 2px solid #c8aa6e;
+  font-weight: bold;
+  z-index: 1000;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  10%, 90% { opacity: 1; }
+}
+
+/* Game Grid */
+.game-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 30px auto;
+  width: fit-content;
+}
+
+.word-row {
+  display: flex;
+  gap: 8px;
+}
+
+.word-row.shake {
+  animation: shake 0.6s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+  20%, 40%, 60%, 80% { transform: translateX(3px); }
+}
+
+.letter-tile {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #3c3c41;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  background: #1e2328;
+}
+
+.letter-tile.filled {
+  border-color: #c8aa6e;
+  background: rgba(200, 170, 110, 0.1);
+}
+
+.letter-tile.correct {
+  background: #22c55e;
+  border-color: #22c55e;
+  color: white;
+  animation: flip 0.5s ease-in-out;
+}
+
+.letter-tile.present {
+  background: #eab308;
+  border-color: #eab308;
+  color: white;
+  animation: flip 0.5s ease-in-out;
+}
+
+.letter-tile.absent {
+  background: #64748b;
+  border-color: #64748b;
+  color: white;
+  animation: flip 0.5s ease-in-out;
+}
+
+@keyframes flip {
+  0% { transform: rotateX(0); }
+  50% { transform: rotateX(90deg); }
+  100% { transform: rotateX(0); }
+}
+
+/* Keyboard */
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 40px;
+  align-items: center;
+}
+
+.keyboard-row {
+  display: flex;
+  gap: 6px;
+}
+
+.key {
+  background: #3c3c41;
+  border: none;
+  color: #f0e6d2;
+  padding: 12px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 40px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.key.special-key {
+  min-width: 60px;
+  font-size: 0.8rem;
+}
+
+.key:hover:not(:disabled) {
+  background: #4a4a4f;
+  transform: translateY(-1px);
+}
+
+.key:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.key:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.key.correct {
+  background: #22c55e;
+  color: white;
+}
+
+.key.present {
+  background: #eab308;
+  color: white;
+}
+
+.key.absent {
+  background: #64748b;
+  color: white;
+}
+
+/* Game Result */
+.game-result {
+  text-align: center;
+  margin-top: 40px;
+  padding: 30px;
+  background: rgba(30, 35, 40, 0.8);
+  border: 2px solid #c8aa6e;
+  border-radius: 12px;
+}
+
+.game-result h3 {
+  font-size: 2rem;
+  margin: 0 0 15px 0;
+  color: #c8aa6e;
+}
+
+.game-result p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  color: #f0e6d2;
+}
+
+.next-game {
+  color: #cdbe91;
+  font-style: italic;
+  margin-top: 20px !important;
+}
+
+/* Loading */
+.wordle.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #c8aa6e;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .wordle {
+    padding: 15px;
+  }
+  
+  .letter-tile {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+  
+  .key {
+    min-width: 35px;
+    height: 45px;
+    font-size: 0.8rem;
+    padding: 10px 6px;
+  }
+  
+  .key.special-key {
+    min-width: 50px;
+    font-size: 0.7rem;
+  }
+  
+  .game-info-bar {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .keyboard {
+    margin-top: 30px;
+  }
+  
+  .keyboard-row {
+    gap: 4px;
+  }
+}
