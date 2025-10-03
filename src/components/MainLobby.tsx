@@ -15,9 +15,9 @@ const games: Game[] = [
     icon: '⚔️'
   },
   {
-    id: 'universal',
-    title: 'UNIVERSAL TOOLS',
-    icon: '🛠️'
+    id: 'daily',
+    title: 'DAILY GIERKI',
+    icon: '🎮'
   },
   {
     id: 'wot',
@@ -79,7 +79,7 @@ function MainLobby() {
                 <h4>Losuj Drużyny</h4>
                 <p>Idealny podział graczy na teams dla aren i custom games</p>
               </div>
-              <Link to="/universal/losuj-druzyny" className="tool-link">Sprawdź</Link>
+              <Link to="/daily/losuj-druzyny" className="tool-link">Sprawdź</Link>
             </div>
           </div>
         </div>

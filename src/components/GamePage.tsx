@@ -69,13 +69,13 @@ function GamePage() {
   const { gameId, toolId } = useParams<{ gameId?: string; toolId?: string }>()
   const location = useLocation()
   
-  // Ustal czy to jest LoL tool czy Universal tool
+  // Ustal czy to jest LoL tool czy Daily tool
   const isLolTool = location.pathname.startsWith('/lol/')
-  const isUniversalTool = location.pathname.startsWith('/universal/')
+  const isDailyTool = location.pathname.startsWith('/daily/')
   const currentToolId = gameId || toolId
   
   // Określ ścieżkę powrotu
-  const backPath = isLolTool ? '/lol' : isUniversalTool ? '/' : '/'
+  const backPath = isLolTool ? '/lol' : isDailyTool ? '/' : '/'
   const backLabel = isLolTool ? '← Powrót do LoL' : '← Powrót do lobby'
   
   const game = currentToolId ? gameData[currentToolId] : null
